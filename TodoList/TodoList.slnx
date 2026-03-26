@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Entities/Entities.csproj" />
+  <Project Path="Infratructure/Infratructure.csproj" />
+  <Project Path="TestProject/TestProject.csproj" />
+  <Project Path="TodoList/TodoList.csproj" />
+  <Project Path="UseCases/UseCases.csproj" />
+</Solution>

@@ -1,0 +1,15 @@
+D:\VSC\projects\TodoList\UseCases\bin\Debug\net8.0\UseCases.deps.json
+D:\VSC\projects\TodoList\UseCases\bin\Debug\net8.0\UseCases.dll
+D:\VSC\projects\TodoList\UseCases\bin\Debug\net8.0\UseCases.pdb
+D:\VSC\projects\TodoList\UseCases\bin\Debug\net8.0\Entities.dll
+D:\VSC\projects\TodoList\UseCases\bin\Debug\net8.0\Entities.pdb
+D:\VSC\projects\TodoList\UseCases\obj\Debug\net8.0\UseCases.csproj.AssemblyReference.cache
+D:\VSC\projects\TodoList\UseCases\obj\Debug\net8.0\UseCases.GeneratedMSBuildEditorConfig.editorconfig
+D:\VSC\projects\TodoList\UseCases\obj\Debug\net8.0\UseCases.AssemblyInfoInputs.cache
+D:\VSC\projects\TodoList\UseCases\obj\Debug\net8.0\UseCases.AssemblyInfo.cs
+D:\VSC\projects\TodoList\UseCases\obj\Debug\net8.0\UseCases.csproj.CoreCompileInputs.cache
+D:\VSC\projects\TodoList\UseCases\obj\Debug\net8.0\UseCases.csproj.Up2Date
+D:\VSC\projects\TodoList\UseCases\obj\Debug\net8.0\UseCases.dll
+D:\VSC\projects\TodoList\UseCases\obj\Debug\net8.0\refint\UseCases.dll
+D:\VSC\projects\TodoList\UseCases\obj\Debug\net8.0\UseCases.pdb
+D:\VSC\projects\TodoList\UseCases\obj\Debug\net8.0\ref\UseCases.dll

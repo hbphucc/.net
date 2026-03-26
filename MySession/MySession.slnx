@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../MySessionIntegrationTest/MySessionIntegrationTest.csproj" Id="c2aec47b-f583-4d0f-9cb1-e385ae9a8dab" />
+  <Project Path="MySession.csproj" />
+</Solution>

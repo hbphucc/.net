@@ -1,0 +1,321 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Project\\MySession\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|d:\\project\\mysession\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C2AEC47B-F583-4D0F-9CB1-E385AE9A8DAB}|..\\MySessionIntegrationTest\\MySessionIntegrationTest.csproj|d:\\project\\mysessionintegrationtest\\sessiontests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|d:\\project\\mysession\\mysession\\mysessionstorage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|solutionrelative:mysession\\mysessionstorage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|d:\\project\\mysession\\mysession\\imysessionstorage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|solutionrelative:mysession\\imysessionstorage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|d:\\project\\mysession\\mysession\\imysessionstorageengine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|solutionrelative:mysession\\imysessionstorageengine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|d:\\project\\mysession\\mysession\\filemysessionstorageengine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|solutionrelative:mysession\\filemysessionstorageengine.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|d:\\project\\mysession\\mysession\\mysession.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|solutionrelative:mysession\\mysession.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|d:\\project\\mysession\\controllers\\testcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|solutionrelative:controllers\\testcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|d:\\project\\mysession\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|solutionrelative:controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|d:\\project\\mysession\\models\\errorviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|solutionrelative:models\\errorviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|d:\\project\\mysession\\mysession\\mysessionextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|solutionrelative:mysession\\mysessionextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|d:\\project\\mysession\\mysession.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|solutionrelative:mysession.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|d:\\project\\mysession\\views\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|solutionrelative:views\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|d:\\project\\mysession\\mysession\\mysessionscopedcontainer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|solutionrelative:mysession\\mysessionscopedcontainer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|d:\\project\\mysession\\mysession\\mysessionregistrationextension.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|solutionrelative:mysession\\mysessionregistrationextension.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|d:\\project\\mysession\\globalusings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|solutionrelative:globalusings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|d:\\project\\mysession\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|solutionrelative:properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|d:\\project\\mysession\\views\\home\\privacy.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{1FB978BE-9C95-C825-D864-867D6E7F0951}|MySession.csproj|solutionrelative:views\\home\\privacy.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ErrorViewModel.cs",
+              "DocumentMoniker": "D:\\Project\\MySession\\Models\\ErrorViewModel.cs",
+              "RelativeDocumentMoniker": "Models\\ErrorViewModel.cs",
+              "ToolTip": "D:\\Project\\MySession\\Models\\ErrorViewModel.cs",
+              "RelativeToolTip": "Models\\ErrorViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-25T20:02:24.76Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "D:\\Project\\MySession\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "Properties\\launchSettings.json",
+              "ToolTip": "D:\\Project\\MySession\\Properties\\launchSettings.json",
+              "RelativeToolTip": "Properties\\launchSettings.json",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-03-25T20:02:09.648Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "SessionTests.cs",
+              "DocumentMoniker": "D:\\Project\\MySessionIntegrationTest\\SessionTests.cs",
+              "RelativeDocumentMoniker": "..\\MySessionIntegrationTest\\SessionTests.cs",
+              "ToolTip": "D:\\Project\\MySessionIntegrationTest\\SessionTests.cs",
+              "RelativeToolTip": "..\\MySessionIntegrationTest\\SessionTests.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-25T19:31:07.664Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "GlobalUsings.cs",
+              "DocumentMoniker": "D:\\Project\\MySession\\GlobalUsings.cs",
+              "RelativeDocumentMoniker": "GlobalUsings.cs",
+              "ToolTip": "D:\\Project\\MySession\\GlobalUsings.cs",
+              "RelativeToolTip": "GlobalUsings.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-25T19:19:53.973Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "MySessionRegistrationExtension.cs",
+              "DocumentMoniker": "D:\\Project\\MySession\\MySession\\MySessionRegistrationExtension.cs",
+              "RelativeDocumentMoniker": "MySession\\MySessionRegistrationExtension.cs",
+              "ToolTip": "D:\\Project\\MySession\\MySession\\MySessionRegistrationExtension.cs",
+              "RelativeToolTip": "MySession\\MySessionRegistrationExtension.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAA8AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-25T19:16:12.285Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Project\\MySession\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "D:\\Project\\MySession\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAAAgwCIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-25T08:44:26.517Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "TestController.cs",
+              "DocumentMoniker": "D:\\Project\\MySession\\Controllers\\TestController.cs",
+              "RelativeDocumentMoniker": "Controllers\\TestController.cs",
+              "ToolTip": "D:\\Project\\MySession\\Controllers\\TestController.cs",
+              "RelativeToolTip": "Controllers\\TestController.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAgwB8AAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-25T18:58:41.182Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "MySessionExtensions.cs",
+              "DocumentMoniker": "D:\\Project\\MySession\\MySession\\MySessionExtensions.cs",
+              "RelativeDocumentMoniker": "MySession\\MySessionExtensions.cs",
+              "ToolTip": "D:\\Project\\MySession\\MySession\\MySessionExtensions.cs",
+              "RelativeToolTip": "MySession\\MySessionExtensions.cs",
+              "ViewState": "AgIAACMAAAAAAAAAAAAcwBQAAABuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-25T04:04:42.888Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "_ViewImports.cshtml",
+              "DocumentMoniker": "D:\\Project\\MySession\\Views\\_ViewImports.cshtml",
+              "RelativeDocumentMoniker": "Views\\_ViewImports.cshtml",
+              "ToolTip": "D:\\Project\\MySession\\Views\\_ViewImports.cshtml",
+              "RelativeToolTip": "Views\\_ViewImports.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-03-25T20:14:28.069Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "MySession.cs",
+              "DocumentMoniker": "D:\\Project\\MySession\\MySession\\MySession.cs",
+              "RelativeDocumentMoniker": "MySession\\MySession.cs",
+              "ToolTip": "D:\\Project\\MySession\\MySession\\MySession.cs",
+              "RelativeToolTip": "MySession\\MySession.cs",
+              "ViewState": "AgIAAB4AAAAAAAAAAAA4wCsAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-25T04:07:55.62Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "IMySessionStorageEngine.cs",
+              "DocumentMoniker": "D:\\Project\\MySession\\MySession\\IMySessionStorageEngine.cs",
+              "RelativeDocumentMoniker": "MySession\\IMySessionStorageEngine.cs",
+              "ToolTip": "D:\\Project\\MySession\\MySession\\IMySessionStorageEngine.cs",
+              "RelativeToolTip": "MySession\\IMySessionStorageEngine.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-25T04:24:24.511Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "D:\\Project\\MySession\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "Controllers\\HomeController.cs",
+              "ToolTip": "D:\\Project\\MySession\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "Controllers\\HomeController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-25T03:59:22.755Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "MySession.csproj",
+              "DocumentMoniker": "D:\\Project\\MySession\\MySession.csproj",
+              "RelativeDocumentMoniker": "MySession.csproj",
+              "ToolTip": "D:\\Project\\MySession\\MySession.csproj",
+              "RelativeToolTip": "MySession.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-03-25T04:03:55.796Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "IMySessionStorage.cs",
+              "DocumentMoniker": "D:\\Project\\MySession\\MySession\\IMySessionStorage.cs",
+              "RelativeDocumentMoniker": "MySession\\IMySessionStorage.cs",
+              "ToolTip": "D:\\Project\\MySession\\MySession\\IMySessionStorage.cs",
+              "RelativeToolTip": "MySession\\IMySessionStorage.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-25T04:11:50Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MySessionStorage.cs",
+              "DocumentMoniker": "D:\\Project\\MySession\\MySession\\MySessionStorage.cs",
+              "RelativeDocumentMoniker": "MySession\\MySessionStorage.cs",
+              "ToolTip": "D:\\Project\\MySession\\MySession\\MySessionStorage.cs",
+              "RelativeToolTip": "MySession\\MySessionStorage.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAQwBYAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-25T04:23:17.002Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "MySessionScopedContainer.cs",
+              "DocumentMoniker": "D:\\Project\\MySession\\MySession\\MySessionScopedContainer.cs",
+              "RelativeDocumentMoniker": "MySession\\MySessionScopedContainer.cs",
+              "ToolTip": "D:\\Project\\MySession\\MySession\\MySessionScopedContainer.cs",
+              "RelativeToolTip": "MySession\\MySessionScopedContainer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-25T18:54:04.607Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Privacy.cshtml",
+              "DocumentMoniker": "D:\\Project\\MySession\\Views\\Home\\Privacy.cshtml",
+              "RelativeDocumentMoniker": "Views\\Home\\Privacy.cshtml",
+              "ToolTip": "D:\\Project\\MySession\\Views\\Home\\Privacy.cshtml",
+              "RelativeToolTip": "Views\\Home\\Privacy.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-03-25T08:50:15.007Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "FileMySessionStorageEngine.cs",
+              "DocumentMoniker": "D:\\Project\\MySession\\MySession\\FileMySessionStorageEngine.cs",
+              "RelativeDocumentMoniker": "MySession\\FileMySessionStorageEngine.cs",
+              "ToolTip": "D:\\Project\\MySession\\MySession\\FileMySessionStorageEngine.cs",
+              "RelativeToolTip": "MySession\\FileMySessionStorageEngine.cs",
+              "ViewState": "AgIAABcAAAAAAAAAAAAowB4AAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-25T04:36:40.166Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
