@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — Fashion Shop</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { display:flex; align-items:center; justify-content:center; min-height:100vh; background:var(--c-bg); }
+    .auth-card { width:420px; background:var(--c-surface); border-radius:16px; box-shadow:var(--shadow-lg); overflow:hidden; }
+    .auth-header { background:linear-gradient(135deg,#2C1810,#C8956C); padding:32px; text-align:center; color:#fff; }
+    .auth-header h1 { font-family:var(--font-display); font-size:28px; }
+    .auth-body  { padding:32px; }
+    .auth-footer { text-align:center; font-size:13px; margin-top:20px; color:var(--c-muted); }
+  </style>
+</head>
+<body>
+
+<div class="auth-card">
+  <div class="auth-header">
+    <h1>Welcome Back</h1>
+    <p style="font-size:13px; opacity:.8; margin-top:6px;">Sign in to your account</p>
+  </div>
+  <div class="auth-body">
+    
+    <div id="errorMsg" class="alert alert-danger" style="display:none; font-size:14px; margin-bottom:16px;"></div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" id="email" class="form-control" placeholder="email@example.com" required autofocus>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+      </div>
+      <button type="submit" id="loginBtn" class="btn btn-primary btn-full" style="margin-top:8px;">
+        <i class="fas fa-sign-in-alt"></i> Sign In
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      Don't have an account? <a href="/register.html" style="color:var(--c-accent);font-weight:600;">Create one</a>
+      <br><br>
+      <a href="/index.html" style="color:inherit;">&larr; Back to Home</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const btn = document.getElementById('loginBtn');
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+      btn.disabled = true;
+
+      const payload = {
+          email: document.getElementById('email').value,
+          password: document.getElementById('password').value
+      };
+
+      try {
+          const res = await fetch('https://localhost:7135/api/Auth/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+          });
+
+          const data = await res.json();
+
+          if (res.ok) {
+              // Save token and user info
+              localStorage.setItem('token', data.token);
+              localStorage.setItem('user', JSON.stringify(data.user));
+              
+              // Redirect based on role
+              if (data.user.role === 'admin') {
+                  window.location.href = '/admin/dashboard.html';
+              } else {
+                  window.location.href = '/index.html';
+              }
+          } else {
+              document.getElementById('errorMsg').innerText = data.message || 'Invalid email or password.';
+              document.getElementById('errorMsg').style.display = 'block';
+          }
+      } catch (err) {
+          console.error(err);
+      } finally {
+          btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+          btn.disabled = false;
+      }
+  });
+</script>
+</body>
+</html>

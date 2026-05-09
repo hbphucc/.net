@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Management — Admin</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <div id="admin-nav-container"></div>
+
+        <div class="admin-content">
+            <div class="admin-header">
+                <h1>Order Management</h1>
+                <span style="color:var(--c-muted);font-size:14px;"><span id="orderCount">0</span> orders</span>
+            </div>
+
+            <div class="filter-bar" style="margin-bottom:24px;" id="statusFilters">
+                <a href="#" data-status="" class="active" onclick="filterOrders(event, '')">All</a>
+                <a href="#" data-status="pending" onclick="filterOrders(event, 'pending')">Pending</a>
+                <a href="#" data-status="processing" onclick="filterOrders(event, 'processing')">Processing</a>
+                <a href="#" data-status="shipped" onclick="filterOrders(event, 'shipped')">Shipped</a>
+                <a href="#" data-status="delivered" onclick="filterOrders(event, 'delivered')">Delivered</a>
+                <a href="#" data-status="cancelled" onclick="filterOrders(event, 'cancelled')">Cancelled</a>
+            </div>
+
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Total Amount</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th>Order Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="orderTableBody">
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <script src="/js/common.js"></script>
+    <script>
+        loadAdminNav();
+
+        const token = localStorage.getItem('token');
+
+        function getStatusLabel(status) {
+            switch(status) {
+                case 'pending': return 'Pending';
+                case 'processing': return 'Processing';
+                case 'shipped': return 'Shipped';
+                case 'delivered': return 'Delivered';
+                case 'cancelled': return 'Cancelled';
+                default: return status;
+            }
+        }
+
+        async function loadOrders(statusFilter = '') {
+            try {
+                let url = 'https://localhost:7135/api/Admin/orders';
+                if (statusFilter !== '') {
+                    url += `?status=${statusFilter}`;
+                }
+
+                const res = await fetch(url, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!res.ok) {
+                    if(res.status === 401 || res.status === 403) {
+                        alert("Unauthorized!");
+                        window.location.href = '/login.html';
+                    }
+                    return;
+                }
+
+                const orders = await res.json();
+
+                document.getElementById('orderCount').innerText = orders.length;
+
+                document.getElementById('orderTableBody').innerHTML = orders.map(o => `
+                    <tr>
+                        <td style="font-family:monospace;font-size:12px;">#${o.orderId.substring(0,8).toUpperCase()}</td>
+                        <td>
+                            <div>${o.fullName || o.userFullName}</div>
+                            <div style="font-size:12px;color:var(--c-muted);">${o.phone}</div>
+                        </td>
+                        <td style="font-weight:600;color:var(--c-accent);">
+                            ${o.totalAmount.toLocaleString('vi-VN')} ₫
+                        </td>
+                        <td>${o.paymentMethod}</td>
+                        <td><span class="badge badge-${o.status}">${getStatusLabel(o.status)}</span></td>
+                        <td style="font-size:13px;color:var(--c-muted);">${new Date(o.createdAt).toLocaleString('vi-VN')}</td>
+                        <td>
+                            <a href="/admin/orderDetail.html?id=${o.orderId}" class="btn btn-outline btn-sm">
+                                <i class="fas fa-eye"></i> Details
+                            </a>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error("Error loading orders:", err);
+            }
+        }
+
+        function filterOrders(event, status) {
+            event.preventDefault();
+
+            const links = document.querySelectorAll('#statusFilters a');
+            links.forEach(link => link.classList.remove('active'));
+
+            event.target.classList.add('active');
+
+            loadOrders(status);
+        }
+
+        loadOrders();
+    </script>
+</body>
+</html>

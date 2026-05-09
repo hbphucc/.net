@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title> — Admin</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <div id="admin-nav-container"></div>
+
+        <div class="admin-content">
+            <div class="admin-header">
+                <h1>Order Details</h1>
+                <a href="/admin/orderList.html" class="btn btn-outline btn-sm">← Order List</a>
+            </div>
+
+            <div id="alertMessage" style="display: none; margin-bottom: 20px;"></div>
+
+            <div id="orderContent" style="display:none; grid-template-columns:1fr 320px; gap:24px;">
+                <div class="form-card">
+                    <h3>Products</h3>
+                    <table style="width:100%;border-collapse:collapse;margin-top:16px;">
+                        <thead>
+                            <tr style="background:var(--c-bg);">
+                                <th style="padding:10px;text-align:left;font-size:12px;color:var(--c-muted);text-transform:uppercase;">Product</th>
+                                <th style="padding:10px;text-align:center;font-size:12px;color:var(--c-muted);text-transform:uppercase;">Size</th>
+                                <th style="padding:10px;text-align:center;font-size:12px;color:var(--c-muted);text-transform:uppercase;">Quantity</th>
+                                <th style="padding:10px;text-align:right;font-size:12px;color:var(--c-muted);text-transform:uppercase;">Unit Price</th>
+                                <th style="padding:10px;text-align:right;font-size:12px;color:var(--c-muted);text-transform:uppercase;">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderDetailsBody">
+                        </tbody>
+                        <tfoot>
+                            <tr style="border-top:2px solid var(--c-border);">
+                                <td colspan="4" style="padding:12px 10px;font-weight:600;text-align:right;">Total:</td>
+                                <td id="orderTotalAmount" style="padding:12px 10px;text-align:right;font-family:var(--font-display);font-size:18px;color:var(--c-accent);font-weight:700;">
+                                    0 ₫
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div style="display:flex;flex-direction:column;gap:20px;">
+                    <div class="form-card">
+                        <h3>Order Information</h3>
+                        <div style="font-size:14px;display:flex;flex-direction:column;gap:10px;margin-top:12px;">
+                            <div><span style="color:var(--c-muted);">Order ID:</span> <strong id="lblOrderId" style="font-family:monospace;"></strong></div>
+                            <div><span style="color:var(--c-muted);">Customer:</span> <strong id="lblCustomerName"></strong></div>
+                            <div><span style="color:var(--c-muted);">Phone :</span> <span id="lblPhone"></span></div>
+                            <div><span style="color:var(--c-muted);">Address:</span> <span id="lblAddress"></span></div>
+                            <div><span style="color:var(--c-muted);">Payment:</span> <strong id="lblPaymentMethod"></strong></div>
+                            <div id="noteContainer" style="display:none;"><span style="color:var(--c-muted);">Note:</span> <span id="lblNote"></span></div>
+                            <div style="padding-top:8px;">
+                                <span style="color:var(--c-muted);">Current Status:</span><br>
+                                <span id="lblStatusBadge" style="margin-top:6px;font-size:13px;"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-card">
+                        <h3>Update Status</h3>
+                        <form id="updateStatusForm" style="margin-top:12px;">
+                            <div class="form-group">
+                                <select id="statusSelect" class="form-control">
+                                    <option value="pending">Pending</option>
+                                    <option value="processing">Processing</option>
+                                    <option value="shipped">Shipped</option>
+                                    <option value="delivered">Delivered</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-full">
+                                <i class="fas fa-sync"></i> Update Status
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="/js/common.js"></script>
+    <script>
+        loadAdminNav();
+
+        const token = localStorage.getItem('token');
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('id');
+
+        function getStatusLabel(status) {
+            switch (status) {
+                case 'pending': return 'Pending';
+                case 'processing': return 'Processing';
+                case 'shipped': return 'Shipped';
+                case 'delivered': return 'Delivered';
+                case 'cancelled': return 'Cancelled';
+                default: return status;
+            }
+        }
+
+        async function loadOrderDetail() {
+            if (!orderId) {
+                alert('Order ID not found!');
+                window.location.href = '/admin/orderList.html';
+                return;
+            }
+
+            try {
+                const res = await fetch(`https://localhost:7135/api/Admin/orders/${orderId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!res.ok) {
+                    alert('Unable to load order details!');
+                    return;
+                }
+
+                const order = await res.json();
+                document.getElementById('orderContent').style.display = 'grid';
+
+                document.getElementById('lblOrderId').innerText = '#' + order.orderId.substring(0, 8).toUpperCase();
+                document.getElementById('lblCustomerName').innerText = order.fullName || order.userFullName;
+                document.getElementById('lblPhone').innerText = order.phone;
+                document.getElementById('lblAddress').innerText = order.address;
+                document.getElementById('lblPaymentMethod').innerText = order.paymentMethod;
+
+                if (order.note) {
+                    document.getElementById('noteContainer').style.display = 'block';
+                    document.getElementById('lblNote').innerText = order.note;
+                }
+
+                const badgeInfo = document.getElementById('lblStatusBadge');
+                badgeInfo.className = `badge badge-${order.status}`;
+                badgeInfo.innerText = getStatusLabel(order.status);
+
+                document.getElementById('statusSelect').value = order.status;
+
+                document.getElementById('orderDetailsBody').innerHTML = order.details.map(d => `
+                  <tr style="border-top:1px solid var(--c-border);">
+                      <td style="padding:12px 10px;">${d.productName}</td>
+                      <td style="padding:12px 10px;text-align:center;">${d.size}</td>
+                      <td style="padding:12px 10px;text-align:center;">${d.quantity}</td>
+                      <td style="padding:12px 10px;text-align:right;">${d.price.toLocaleString('vi-VN')} ₫</td>
+                      <td style="padding:12px 10px;text-align:right;font-weight:600;color:var(--c-accent);">${(d.price * d.quantity).toLocaleString('vi-VN')} ₫</td>
+                  </tr>
+              `).join('');
+
+                document.getElementById('orderTotalAmount').innerText = order.totalAmount.toLocaleString('vi-VN') + ' ₫';
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        document.getElementById('updateStatusForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const newStatus = document.getElementById('statusSelect').value;
+
+            try {
+                const res = await fetch(`https://localhost:7135/api/Admin/orders/${orderId}/status?status=${newStatus}`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const alertBox = document.getElementById('alertMessage');
+                if (res.ok) {
+                    alertBox.className = 'alert alert-success';
+                    alertBox.innerHTML = '<i class="fas fa-check-circle"></i> Update status successfully!';
+                    alertBox.style.display = 'block';
+                    loadOrderDetail();
+                } else {
+                    alertBox.className = 'alert alert-danger';
+                    alertBox.innerHTML = '<i class="fas fa-exclamation-circle"></i> An error occurred while updating.';
+                    alertBox.style.display = 'block';
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+        loadOrderDetail();
+    </script>
+</body>
+</html>

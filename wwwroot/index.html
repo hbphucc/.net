@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fashion Shop — Modern Online Fashion</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div id="navbar-container"></div>
+
+    <div class="hero">
+        <div class="container">
+            <h1>Modern Fashion</h1>
+            <p>Discover the latest collections for men and women</p>
+            <a href="#shop" class="btn btn-primary" style="font-size:16px;padding:14px 32px;">Shop Now</a>
+        </div>
+    </div>
+
+    <div class="section" id="shop">
+        <div class="container">
+            <div class="product-grid" id="productGrid">
+            </div>
+        </div>
+    </div>
+
+    <div class="footer"><div class="container"><div class="footer-bottom">© 2026 Fashion Shop. All rights reserved.</div></div></div>
+
+    <script src="/js/common.js"></script>
+    <script>
+        loadNavbar();
+
+        async function loadProducts() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const search = urlParams.get('search') || '';
+                const gender = urlParams.get('gender') || '';
+
+                const res = await fetch(`https://localhost:7135/api/Products?search=${search}&gender=${gender}`);
+                const data = await res.json();
+
+                const container = document.getElementById('productGrid');
+
+                if (data.items.length === 0) {
+                    container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 50px; color: var(--c-muted);"><h3>No products found.</h3></div>';
+                    return;
+                }
+
+                container.innerHTML = data.items.map(p => {
+                    const genderLabel = p.gender === 'male' ? 'Men' : p.gender === 'female' ? 'Women' : 'Unisex';
+                    return `
+                  <div class="product-card">
+                    <div class="product-card__img" style="background-image:url('${p.img}')"></div>
+                    <div class="product-card__body">
+                      <div class="product-card__cat">${p.categoryName} &bull; ${genderLabel}</div>
+                      <div class="product-card__name">${p.productName}</div>
+                      <div class="product-card__price">${formatCurrency(p.price)}</div>
+                    </div>
+                    <div class="product-card__actions">
+                      <a href="/productDetail.html?id=${p.productId}" class="btn btn-outline btn-sm" style="width: 100%;">View Details</a>
+                    </div>
+                  </div>`;
+                }).join('');
+            } catch (err) {
+                console.error("Error fetching products:", err);
+            }
+        }
+
+        loadProducts();
+    </script>
+</body>
+</html>

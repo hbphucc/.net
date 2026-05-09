@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Admin</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <div id="admin-nav-container"></div>
+
+        <div class="admin-content">
+            <h1>Dashboard</h1>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card__label">Total Products</div>
+                    <div class="stat-card__value" id="valProducts">...</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card__label">Today's Revenue</div>
+                    <div class="stat-card__value" style="color:var(--c-accent)" id="valRevenue">...</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card__label">Pending Orders</div>
+                    <div class="stat-card__value" style="color:red" id="valOrders">...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/common.js"></script>
+    <script>
+    loadAdminNav();
+
+    async function loadDashboardData() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login.html'; return;
+        }
+
+        try {
+            const res = await fetch('https://localhost:7135/api/Admin/dashboard', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (res.status === 401 || res.status === 403) {
+                alert('Session expired or you do not have Admin rights!');
+                window.location.href = '/login.html'; return;
+            }
+
+            const data = await res.json();
+            document.getElementById('valProducts').innerText = data.totalProducts;
+            document.getElementById('valUsers').innerText = data.totalUsers; 
+            document.getElementById('valNewUsers').innerText = data.newUsersToday; 
+            document.getElementById('valMonthRevenue').innerText = formatCurrency(data.monthRevenue); // New
+            document.getElementById('valRevenue').innerText = formatCurrency(data.todayRevenue);
+            document.getElementById('valOrders').innerText = data.newOrdersCount;
+
+        } catch (e) { console.error(e); }
+    }
+
+    loadDashboardData();
+    </script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details — Fashion Shop</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div id="navbar-container"></div>
+
+    <div class="container section" style="min-height: 60vh;">
+
+        <div id="alertBox" style="display:none; font-size:15px; padding:16px 20px; margin-bottom:20px; border-radius:8px;">
+        </div>
+
+        <div class="section-header">
+            <h2 class="section-title">Order Details</h2>
+            <a href="/orderHistory.html" class="btn btn-outline btn-sm">&larr; Back to Order History</a>
+        </div>
+
+        <div id="loading" style="text-align:center; padding:50px;">
+            <i class="fas fa-spinner fa-spin fa-2x" style="color:var(--c-accent)"></i>
+        </div>
+
+        <div id="orderContent" style="display:none; grid-template-columns:1fr 340px; gap:24px;">
+
+            <div>
+                <div class="form-card">
+                    <h3>Ordered Products</h3>
+                    <table style="width:100%; border-collapse:collapse;">
+                        <thead>
+                            <tr style="background:var(--c-bg);">
+                                <th style="padding:12px; text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:.5px; color:var(--c-muted);">Product</th>
+                                <th style="padding:12px; text-align:center; font-size:12px; text-transform:uppercase; letter-spacing:.5px; color:var(--c-muted);">Size</th>
+                                <th style="padding:12px; text-align:center; font-size:12px; text-transform:uppercase; letter-spacing:.5px; color:var(--c-muted);">Qty</th>
+                                <th style="padding:12px; text-align:right; font-size:12px; text-transform:uppercase; letter-spacing:.5px; color:var(--c-muted);">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderDetailsBody">
+                        </tbody>
+                        <tfoot>
+                            <tr style="border-top:2px solid var(--c-border);">
+                                <td colspan="3" style="padding:14px 12px; font-weight:600; text-align:right;">Total:</td>
+                                <td id="orderTotalAmount" style="padding:14px 12px; text-align:right; font-family:var(--font-display); font-size:18px; color:var(--c-accent); font-weight:700;">
+                                    0 ₫
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <div>
+                <div class="form-card">
+                    <h3>Order Information</h3>
+                    <div style="display:flex; flex-direction:column; gap:12px; font-size:14px;">
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="color:var(--c-muted);">Order ID</span>
+                            <strong style="font-family:monospace;" id="lblOrderId">...</strong>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="color:var(--c-muted);">Date</span>
+                            <span id="lblOrderDate">...</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="color:var(--c-muted);">Status</span>
+                            <span id="lblStatusBadge" class="badge">...</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="color:var(--c-muted);">Payment</span>
+                            <strong id="lblPaymentMethod">...</strong>
+                        </div>
+
+                        <hr style="border:none; border-top:1px solid var(--c-border);">
+
+                        <div><span style="color:var(--c-muted);">Recipient:</span> <strong id="lblFullName">...</strong></div>
+                        <div><span style="color:var(--c-muted);">Phone:</span> <span id="lblPhone">...</span></div>
+                        <div><span style="color:var(--c-muted);">Address:</span> <span id="lblAddress">...</span></div>
+
+                        <div id="noteContainer" style="display:none;">
+                            <span style="color:var(--c-muted);">Note:</span> <span id="lblNote">...</span>
+                        </div>
+                    </div>
+
+                    <div id="cancelContainer" style="display:none;">
+                        <hr style="border:none; border-top:1px solid var(--c-border); margin:16px 0;">
+                        <button type="button" class="btn btn-sm" onclick="cancelOrder()" style="width:100%; background:#dc3545; color:#fff; border:none; cursor:pointer; padding:10px;">
+                            <i class="fas fa-times-circle"></i> Cancel Order
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="footer"><div class="container"><div class="footer-bottom">© 2026 Fashion Shop.</div></div></div>
+
+    <script src="/js/common.js"></script>
+    <script>
+        loadNavbar();
+
+        const token = localStorage.getItem('token');
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('id');
+
+
+        function checkUrlAlerts() {
+            const alertBox = document.getElementById('alertBox');
+            if (urlParams.get('success') === '1') {
+                alertBox.className = 'alert alert-success';
+                alertBox.innerHTML = '<i class="fas fa-check-circle"></i> <strong>Order placed successfully!</strong> Thank you for shopping at Fashion Shop.';
+                alertBox.style.display = 'block';
+            } else if (urlParams.get('cancelled') === '1') {
+                alertBox.className = 'alert alert-success';
+                alertBox.innerHTML = '<i class="fas fa-check-circle"></i> Order has been <strong>cancelled successfully</strong>.';
+                alertBox.style.display = 'block';
+            } else if (urlParams.get('cancelError') === '1') {
+                alertBox.className = 'alert alert-danger';
+                alertBox.innerHTML = '<i class="fas fa-exclamation-circle"></i> Cannot cancel this order. Only pending orders can be cancelled.';
+                alertBox.style.display = 'block';
+            }
+
+            if (window.history.replaceState && (urlParams.has('success') || urlParams.has('cancelled') || urlParams.has('cancelError'))) {
+                const newUrl = window.location.pathname + '?id=' + orderId;
+                window.history.replaceState({}, document.title, newUrl);
+            }
+        }
+
+        async function loadOrderDetails() {
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
+            if (!orderId) {
+                window.location.href = '/orderHistory.html';
+                return;
+            }
+
+            checkUrlAlerts();
+
+            try {
+
+                const res = await fetch(`https://localhost:7135/api/Orders/${orderId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                document.getElementById('loading').style.display = 'none';
+
+                if (!res.ok) {
+                    alert('Order not found or access denied.');
+                    window.location.href = '/orderHistory.html';
+                    return;
+                }
+
+                const order = await res.json();
+                document.getElementById('orderContent').style.display = 'grid';
+
+
+                let statusBadge = 'default';
+                if (order.status === 'delivered') statusBadge = 'delivered';
+                if (order.status === 'processing' || order.status === 'shipped') statusBadge = 'processing';
+                if (order.status === 'cancelled') statusBadge = 'cancelled';
+
+                document.getElementById('lblOrderId').innerText = '#' + order.orderId.substring(0, 8).toUpperCase();
+                document.getElementById('lblOrderDate').innerText = new Date(order.createdAt).toLocaleString('en-US');
+                document.getElementById('lblPaymentMethod').innerText = order.paymentMethod;
+                document.getElementById('lblFullName').innerText = order.fullName || order.userFullName;
+                document.getElementById('lblPhone').innerText = order.phone;
+                document.getElementById('lblAddress').innerText = order.address;
+
+                const badgeEl = document.getElementById('lblStatusBadge');
+                badgeEl.className = `badge badge-${statusBadge}`;
+                badgeEl.innerText = order.status.charAt(0).toUpperCase() + order.status.slice(1);
+
+                if (order.note) {
+                    document.getElementById('noteContainer').style.display = 'block';
+                    document.getElementById('lblNote').innerText = order.note;
+                }
+
+                if (order.status === 'pending') {
+                    document.getElementById('cancelContainer').style.display = 'block';
+                }
+
+
+                document.getElementById('orderDetailsBody').innerHTML = order.details.map(d => {
+                    const subTotal = d.price * d.quantity;
+                    return `
+                    <tr style="border-top:1px solid var(--c-border);">
+                      <td style="padding:14px 12px;">${d.productName}</td>
+                      <td style="padding:14px 12px; text-align:center;">
+                        <span class="badge" style="background:var(--c-bg); color:var(--c-text); border:1px solid var(--c-border);">${d.size}</span>
+                      </td>
+                      <td style="padding:14px 12px; text-align:center;">${d.quantity}</td>
+                      <td style="padding:14px 12px; text-align:right; font-weight:600; color:var(--c-accent);">
+                        ${formatCurrency(subTotal)}
+                      </td>
+                    </tr>
+                  `;
+                }).join('');
+
+                document.getElementById('orderTotalAmount').innerText = formatCurrency(order.totalAmount);
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function cancelOrder() {
+            if (!confirm('Are you sure you want to cancel this order?')) return;
+
+            try {
+                const res = await fetch(`https://localhost:7135/api/Orders/${orderId}/cancel`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.ok) {
+                    window.location.href = `/orderDetail.html?id=${orderId}&cancelled=1`;
+                } else {
+                    window.location.href = `/orderDetail.html?id=${orderId}&cancelError=1`;
+                }
+            } catch (err) {
+                console.error('Cancel Order Error:', err);
+            }
+        }
+
+        loadOrderDetails();
+    </script>
+</body>
+</html>

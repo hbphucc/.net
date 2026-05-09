@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>User Management — Admin</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <div id="admin-nav-container"></div>
+        <div class="admin-content">
+            <div class="admin-header"><h1>User Management</h1></div>
+            <table class="admin-table">
+                <thead><tr><th>Full Name</th><th>Email</th><th>Role</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody id="userTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+    <script src="/js/common.js"></script>
+    <script>
+        loadAdminNav();
+        const token = localStorage.getItem('token');
+
+        async function loadUsers() {
+            const res = await fetch('https://localhost:7135/api/Admin/users', { 
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const users = await res.json();
+            document.getElementById('userTableBody').innerHTML = users.map(u => `
+          <tr>
+            <td><strong>${u.fullName}</strong></td>
+            <td>${u.email}</td>
+            <td><span class="badge ${u.role === 'admin' ? 'badge-processing' : ''}">${u.role}</span></td>
+            <td><span class="badge ${u.status ? 'badge-delivered' : 'badge-cancelled'}">${u.status ? 'Active' : 'Blocked'}</span></td>
+            <td>
+              ${u.role !== 'admin' ? `
+                <button class="btn btn-sm ${u.status ? 'btn-danger' : 'btn-outline'}" onclick="toggleUser('${u.userId}', ${!u.status})">
+                  ${u.status ? 'Block' : 'Unblock'}
+                </button>
+              ` : ''}
+            </td>
+          </tr>
+        `).join('');
+        }
+
+        async function toggleUser(id, newStatus) {
+            if (confirm('Confirm change of account status?')) {
+                await fetch(`https://localhost:7135/api/Admin/users/${id}/status?status=${newStatus}`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                loadUsers();
+            }
+        }
+        loadUsers();
+    </script>
+</body>
+</html>

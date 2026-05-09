@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History — Fashion Shop</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div id="navbar-container"></div>
+
+    <div class="container section" style="min-height: 60vh;">
+        <div class="section-header">
+            <h2 class="section-title">Order History</h2>
+            <a href="/index.html" class="btn btn-outline btn-sm">&larr; Continue Shopping</a>
+        </div>
+
+        <div id="loading" style="text-align:center; padding:50px;">
+            <i class="fas fa-spinner fa-spin fa-2x" style="color:var(--c-accent)"></i>
+        </div>
+
+        <div id="emptyState" style="display:none; text-align:center; padding:64px; color:var(--c-muted);">
+            <div style="font-size:48px; margin-bottom:16px;">📦</div>
+            <h3>No orders found</h3>
+            <a href="/index.html" class="btn btn-primary" style="margin-top:16px;">Start Shopping</a>
+        </div>
+
+        <table class="admin-table" id="ordersTable" style="display:none;">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Total Amount</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="ordersBody">
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer"><div class="container"><div class="footer-bottom">© 2026 Fashion Shop.</div></div></div>
+
+    <script src="/js/common.js"></script>
+    <script>
+        loadNavbar();
+
+        async function loadOrderHistory() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Please sign in to view your orders.');
+                window.location.href = '/login.html';
+                return;
+            }
+
+            try {
+                const res = await fetch('https://localhost:7135/api/Orders/history', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                document.getElementById('loading').style.display = 'none';
+
+                if (res.ok) {
+                    const orders = await res.json();
+                    if (orders.length === 0) {
+                        document.getElementById('emptyState').style.display = 'block';
+                    } else {
+                        document.getElementById('ordersTable').style.display = 'table';
+                        const tbody = document.getElementById('ordersBody');
+
+                        tbody.innerHTML = orders.map(o => {
+                            let statusBadge = 'default';
+                            if (o.status === 'delivered') statusBadge = 'delivered';
+                            if (o.status === 'processing' || o.status === 'shipped') statusBadge = 'processing';
+                            if (o.status === 'cancelled') statusBadge = 'cancelled';
+
+                            return `
+                          <tr>
+                            <td style="font-family:monospace; font-weight:bold;">#${o.orderId.substring(0, 8).toUpperCase()}</td>
+                            <td>${new Date(o.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+                            <td style="color:var(--c-accent); font-weight:600;">${formatCurrency(o.totalAmount)}</td>
+                            <td>${o.paymentMethod}</td>
+                            <td><span class="badge badge-${statusBadge}" style="text-transform: capitalize;">${o.status}</span></td>
+    
+                            <td>
+                              <a href="/orderDetail.html?id=${o.orderId}" class="btn btn-outline btn-sm">
+                                <i class="fas fa-eye"></i> Details
+                              </a>
+                            </td>
+                          </tr>`;
+                        }).join('');
+                    }
+                } else {
+                    if (res.status === 401) {
+                        localStorage.removeItem('token');
+                        window.location.href = '/login.html';
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        loadOrderHistory();
+    </script>
+</body>
+</html>

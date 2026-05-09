@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Product — Admin</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .size-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 12px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .size-item label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 14px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <div id="admin-nav-container"></div>
+
+        <div class="admin-content">
+
+            <div class="admin-header">
+                <h1 id="pageTitle">Edit Product</h1>
+                <a href="/admin/productList.html" class="btn btn-outline btn-sm">← Back to Product List</a>
+            </div>
+
+            <div id="alertMessage" style="display: none; margin-bottom: 20px;"></div>
+
+            <div style="max-width:700px;">
+                <div class="form-card">
+                    <form id="productForm">
+                        <input type="hidden" id="productId">
+
+                        <div class="form-group">
+                            <label class="form-label">Product Name *</label>
+                            <input type="text" id="productName" class="form-control" required placeholder="Classic Men's Polo Shirt">
+                        </div>
+
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                            <div class="form-group">
+                                <label class="form-label">Category *</label>
+                                <select id="categoryId" class="form-control" required>
+                                    <option value="">-- Select Category --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Price (₫) *</label>
+                                <input type="number" id="price" class="form-control" required min="0" placeholder="350000">
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-top: 10px; margin-bottom: 20px;">
+                            <label class="form-label" style="font-weight: bold; color: var(--c-primary);">Stock Quantity by Size *</label>
+                            <div class="size-grid">
+                                <div class="size-item"><label>Size S</label><input type="number" id="stock_S" value="0" min="0" class="form-control" style="text-align: center;"></div>
+                                <div class="size-item"><label>Size M</label><input type="number" id="stock_M" value="0" min="0" class="form-control" style="text-align: center;"></div>
+                                <div class="size-item"><label>Size L</label><input type="number" id="stock_L" value="0" min="0" class="form-control" style="text-align: center;"></div>
+                                <div class="size-item"><label>Size XL</label><input type="number" id="stock_XL" value="0" min="0" class="form-control" style="text-align: center;"></div>
+                                <div class="size-item"><label>Size XXL</label><input type="number" id="stock_XXL" value="0" min="0" class="form-control" style="text-align: center;"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Image URL</label>
+                            <input type="url" id="imgUrl" class="form-control" placeholder="https://..." oninput="updateImagePreview()">
+                        </div>
+
+                        <div class="form-group" id="imgPreviewContainer" style="display:none;">
+                            <label class="form-label">Current Image</label><br />
+                            <img id="imgPreview" src="" style="height:120px; border-radius:8px; object-fit:cover; border: 1px solid #ddd; padding: 3px;">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Description</label>
+                            <textarea id="description" class="form-control" rows="4"></textarea>
+                        </div>
+
+                        <div style="display:flex;gap:12px;margin-top:20px;">
+                            <button type="submit" class="btn btn-primary" style="padding: 10px 20px;">
+                                <i class="fas fa-save"></i> <span id="submitBtnText">Add Product</span>
+                            </button>
+                            <a href="/admin/productList.html" class="btn btn-outline" style="padding: 10px 20px;">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="/js/common.js"></script>
+    <script>
+  loadAdminNav();
+  const token = localStorage.getItem('token');
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const editId = urlParams.get('id');
+
+  function updateImagePreview() {
+      const url = document.getElementById('imgUrl').value;
+      const container = document.getElementById('imgPreviewContainer');
+      const img = document.getElementById('imgPreview');
+      if (url) {
+          img.src = url;
+          container.style.display = 'block';
+      } else {
+          container.style.display = 'none';
+      }
+  }
+
+  async function loadCategories() {
+      try {
+          const res = await fetch('https://localhost:7135/api/Categories');
+          const categories = await res.json();
+          const select = document.getElementById('categoryId');
+
+          categories.forEach(c => {
+              const option = document.createElement('option');
+              option.value = c.categoryId;
+              option.innerText = `${c.categoryName} (${c.gender === 'male' ? 'Nam' : c.gender === 'female' ? 'Nữ' : 'Unisex'})`;
+              select.appendChild(option);
+          });
+      } catch (err) { console.error("Error loading categories:", err); }
+  }
+
+  async function loadProductDetails() {
+      if (!editId) return; 
+
+      document.getElementById('pageTitle').innerText = 'Edit Product';
+      document.getElementById('submitBtnText').innerText = 'Update';
+      document.getElementById('productId').value = editId;
+
+      try {
+          const res = await fetch(`https://localhost:7135/api/Products/${editId}`);
+          if (!res.ok) throw new Error("Product not found");
+
+          const p = await res.json();
+
+          document.getElementById('productName').value = p.productName;
+          document.getElementById('categoryId').value = p.categoryId;
+          document.getElementById('price').value = p.price;
+          document.getElementById('imgUrl').value = p.img || '';
+          document.getElementById('description').value = p.description || '';
+
+          if (p.sizeQuantities) {
+              document.getElementById('stock_S').value = p.sizeQuantities['S'] || 0;
+              document.getElementById('stock_M').value = p.sizeQuantities['M'] || 0;
+              document.getElementById('stock_L').value = p.sizeQuantities['L'] || 0;
+              document.getElementById('stock_XL').value = p.sizeQuantities['XL'] || 0;
+              document.getElementById('stock_XXL').value = p.sizeQuantities['XXL'] || 0;
+          }
+
+          updateImagePreview();
+      } catch (err) {
+          alert(err.message);
+      }
+  }
+
+  document.getElementById('productForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const payload = {
+          productName: document.getElementById('productName').value,
+          categoryId: document.getElementById('categoryId').value,
+          price: parseFloat(document.getElementById('price').value),
+          img: document.getElementById('imgUrl').value,
+          description: document.getElementById('description').value,
+          sizeQuantities: {
+              'S': parseInt(document.getElementById('stock_S').value) || 0,
+              'M': parseInt(document.getElementById('stock_M').value) || 0,
+              'L': parseInt(document.getElementById('stock_L').value) || 0,
+              'XL': parseInt(document.getElementById('stock_XL').value) || 0,
+              'XXL': parseInt(document.getElementById('stock_XXL').value) || 0
+          }
+      };
+
+      const isUpdate = !!editId;
+      const method = isUpdate ? 'PUT' : 'POST';
+      const url = isUpdate
+                  ? `https://localhost:7135/api/Products/${editId}`
+                  : `https://localhost:7135/api/Products`;
+
+      try {
+          const res = await fetch(url, {
+              method: method,
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify(payload)
+          });
+
+          if (res.ok) {
+              window.location.href = '/admin/productList.html?msg=' + (isUpdate ? 'updated' : 'added');
+          } else {
+              const errData = await res.json();
+              document.getElementById('alertMessage').className = 'alert alert-danger';
+              document.getElementById('alertMessage').innerHTML = `<i class="fas fa-exclamation-circle"></i> Error: ${errData.message || 'Operation failed!'}`;
+              document.getElementById('alertMessage').style.display = 'block';
+          }
+      } catch (err) {
+          console.error(err);
+      }
+  });
+
+  async function init() {
+      await loadCategories(); 
+      await loadProductDetails();
+  }
+  init();
+
+    </script>
+</body>
+</html>

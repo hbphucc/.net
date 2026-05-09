@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details — Fashion Shop</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div id="navbar-container"></div>
+
+    <div class="container" style="padding-bottom: 60px;">
+        <p style="padding:16px 0;font-size:13px;color:var(--c-muted);">
+            <a href="/index.html">Home</a> &rsaquo;
+            <span id="bcCategory">Category</span> &rsaquo;
+            <span id="bcProductName">Product</span>
+        </p>
+
+        <div class="product-detail">
+            <div class="product-detail__img" id="productImg" style="background-image:url('')"></div>
+
+            <div class="product-detail__info">
+                <div class="product-detail__cat" id="productCat">Category &bull; Gender</div>
+                <h1 id="productName">Loading Product...</h1>
+                <div class="product-detail__price" id="productPrice">0 ₫</div>
+                <p class="product-detail__desc" id="productDesc"></p>
+
+                <form id="addCartForm">
+                    <input type="hidden" id="selectedSize" value="">
+
+                    <div style="margin-bottom:20px;">
+                        <div class="form-label">Select Size:</div>
+                        <div class="size-selector" id="sizeContainer">
+                        </div>
+                        <p id="size-quantity-info" style="margin-top:8px;font-size:13px;min-height:18px;"></p>
+                    </div>
+
+                    <div class="form-label">Quantity:</div>
+                    <div class="qty-control" style="margin-bottom:24px;">
+                        <button type="button" onclick="changeQty(-1)">−</button>
+                        <input type="number" id="qtyInput" value="1" min="1" max="10">
+                        <button type="button" onclick="changeQty(1)">+</button>
+                    </div>
+
+                    <div style="display:flex;gap:12px;">
+                        <button type="button" class="btn btn-primary" style="flex:1;" onclick="addToCart()">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
+                        <a href="/index.html" class="btn btn-outline">Continue Shopping</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/common.js"></script>
+    <script>
+        loadNavbar();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+        let currentProduct = null;
+
+        async function loadProduct() {
+            try {
+                const res = await fetch(`https://localhost:7135/api/Products/${productId}`);
+                if (!res.ok) {
+                    alert("Product not found!");
+                    window.location.href = "/index.html";
+                    return;
+                }
+                currentProduct = await res.json();
+
+                // Fill Data
+                document.title = `${currentProduct.productName} — Fashion Shop`;
+                document.getElementById('bcCategory').innerText = currentProduct.categoryName;
+                document.getElementById('bcProductName').innerText = currentProduct.productName;
+                document.getElementById('productImg').style.backgroundImage = `url('${currentProduct.img}')`;
+
+                const genderLabel = currentProduct.gender === 'male' ? 'Men' : currentProduct.gender === 'female' ? 'Women' : 'Unisex';
+                document.getElementById('productCat').innerHTML = `${currentProduct.categoryName} &bull; ${genderLabel}`;
+                document.getElementById('productName').innerText = currentProduct.productName;
+                document.getElementById('productPrice').innerText = formatCurrency(currentProduct.price);
+                document.getElementById('productDesc').innerText = currentProduct.description || 'No description available.';
+
+                // Render Sizes
+                const sizeContainer = document.getElementById('sizeContainer');
+                let hasStock = false;
+
+                if (currentProduct.sizeQuantities) {
+                    Object.entries(currentProduct.sizeQuantities).forEach(([sz, qty]) => {
+                        if (qty > 0) hasStock = true;
+                        sizeContainer.innerHTML += `
+                        <button type="button" class="size-btn ${qty === 0 ? 'out-of-stock' : ''}"
+                                ${qty === 0 ? 'disabled' : `onclick="selectSize(this, '${sz}', ${qty})"`}>
+                          ${sz}
+                        </button>`;
+                    });
+                }
+
+                if (!hasStock) {
+                    sizeContainer.innerHTML = '<p style="color:var(--c-danger);font-size:14px;">Out of stock</p>';
+                }
+
+            } catch (err) { console.error(err); }
+        }
+
+        function selectSize(btn, size, qty) {
+            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            document.getElementById('selectedSize').value = size;
+
+            const info = document.getElementById('size-quantity-info');
+            info.textContent = `In stock: ${qty} items`;
+            info.style.color = '#555';
+
+            const qtyInput = document.getElementById('qtyInput');
+            qtyInput.max = qty || 1;
+            qtyInput.value = 1;
+        }
+
+        function changeQty(delta) {
+            const input = document.getElementById('qtyInput');
+            const maxQty = parseInt(input.max) || 1;
+            input.value = Math.max(1, Math.min(maxQty, parseInt(input.value) + delta));
+        }
+
+        function addToCart() {
+            const size = document.getElementById('selectedSize').value;
+            const qty = parseInt(document.getElementById('qtyInput').value);
+
+            if (!size) {
+                alert('Please select a size!');
+                return;
+            }
+
+            let cart = JSON.parse(localStorage.getItem('cart')) || {};
+            const cartKey = `${currentProduct.productId}_${size}`;
+
+            if (cart[cartKey]) {
+                cart[cartKey].quantity += qty;
+            } else {
+                cart[cartKey] = {
+                    productId: currentProduct.productId,
+                    productName: currentProduct.productName,
+                    img: currentProduct.img,
+                    price: currentProduct.price,
+                    size: size,
+                    quantity: qty
+                };
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert('Added to cart successfully!');
+            updateNavbarUI(); 
+        }
+
+        loadProduct();
+    </script>
+</body>
+</html>

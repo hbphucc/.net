@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Category Management — Admin</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="admin-layout">
+  <div id="admin-nav-container"></div> <div class="admin-content">
+    <div class="admin-header"><h1>Category Management</h1></div>
+    <div style="display:grid;grid-template-columns:1fr 360px;gap:24px;">
+      <table class="admin-table">
+        <thead><tr><th>Category Name</th><th>Gender</th><th>Action</th></tr></thead>
+        <tbody id="catTableBody"></tbody>
+      </table>
+      <div class="form-card">
+        <h3 id="formTitle">Add New Category</h3>
+        <form id="catForm">
+          <input type="hidden" id="catID">
+          <div class="form-group"><label>Category Name *</label><input type="text" id="catName" class="form-control" required></div>
+          <div class="form-group">
+            <label>Gender</label>
+            <select id="catGender" class="form-control">
+              <option value="male">Male</option><option value="female">Female</option><option value="unisex">Unisex</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Description</label><input type="text" id="catDesc" class="form-control"></div>
+          <button type="submit" class="btn btn-primary btn-full" id="submitBtn">Add Category</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/js/common.js"></script>
+<script>
+  loadAdminNav();
+  const token = localStorage.getItem('token');
+
+  async function loadCategories() {
+    const res = await fetch('https://localhost:7135/api/Categories');
+    const data = await res.json();
+    document.getElementById('catTableBody').innerHTML = data.map(c => `
+      <tr>
+        <td><strong>${c.categoryName}</strong></td>
+        <td>${c.gender}</td>
+        <td>
+          <button class="btn btn-sm btn-outline" onclick="editCat('${c.categoryId}','${c.categoryName}','${c.gender}','${c.description}')">Sửa</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteCat('${c.categoryId}')">Xóa</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  document.getElementById('catForm').onsubmit = async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('catID').value;
+    const body = {
+      categoryName: document.getElementById('catName').value,
+      gender: document.getElementById('catGender').value,
+      description: document.getElementById('catDesc').value
+    };
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? `https://localhost:7135/api/Categories/${id}` : 'https://localhost:7135/api/Categories';
+
+    await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      body: JSON.stringify(body)
+    });
+    location.reload();
+  };
+
+  async function deleteCat(id) {
+    if(confirm('Delete this category?')) {
+      await fetch(`https://localhost:7135/api/Categories/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      loadCategories();
+    }
+  }
+
+  function editCat(id, name, gender, desc) {
+    document.getElementById('catID').value = id;
+    document.getElementById('catName').value = name;
+    document.getElementById('catGender').value = gender;
+    document.getElementById('catDesc').value = desc;
+    document.getElementById('formTitle').innerText = 'Edit Category';
+    document.getElementById('submitBtn').innerText = 'Update Category';
+  }
+
+  loadCategories();
+</script>
+</body>
+</html>

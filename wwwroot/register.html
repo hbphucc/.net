@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account — Fashion Shop</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: var(--c-bg);
+            padding: 32px 0;
+        }
+
+        .auth-card {
+            width: 460px;
+            background: var(--c-surface);
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg,#2C1810,#C8956C);
+            padding: 28px 32px;
+            text-align: center;
+            color: #fff;
+        }
+
+            .auth-header h1 {
+                font-family: var(--font-display);
+                font-size: 26px;
+            }
+
+        .auth-body {
+            padding: 32px;
+        }
+
+        .auth-footer {
+            text-align: center;
+            font-size: 13px;
+            color: var(--c-muted);
+            margin-top: 20px;
+        }
+
+            .auth-footer a {
+                color: var(--c-accent);
+                font-weight: 500;
+            }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>Fashion Shop</h1>
+            <p>Create a new account</p>
+        </div>
+        <div class="auth-body">
+
+            <div id="errorMsg" class="alert alert-danger" style="display:none; font-size:14px; margin-bottom:16px;"></div>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" id="fullName" class="form-control" placeholder="John Doe" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="email" class="form-control" placeholder="email@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" id="phone" class="form-control" placeholder="0901234567">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" id="password" class="form-control" placeholder="••••••••" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Confirm Password</label>
+                        <input type="password" id="passwordConfirm" class="form-control" placeholder="••••••••" required>
+                    </div>
+                </div>
+                <div id="pwdError" style="color:var(--c-danger);font-size:13px;margin-top:-8px;margin-bottom:12px;display:none;">
+                    Passwords do not match
+                </div>
+
+                <button type="submit" id="registerBtn" class="btn btn-primary btn-full">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                Already have an account? <a href="/login.html">Sign In</a>
+                <br><br>
+                <a href="/index.html" style="color:inherit;">&larr; Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const pwd = document.getElementById('password').value;
+            const pwdConfirm = document.getElementById('passwordConfirm').value;
+            const pwdError = document.getElementById('pwdError');
+
+            if (pwd !== pwdConfirm) {
+                pwdError.style.display = 'block';
+                return;
+            }
+            pwdError.style.display = 'none';
+
+            const btn = document.getElementById('registerBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+            btn.disabled = true;
+
+            const payload = {
+                fullName: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                password: pwd
+            };
+
+            try {
+                const res = await fetch('https://localhost:7135/api/Auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    window.location.href = '/login.html?msg=register_success';
+                } else {
+                    const data = await res.json();
+                    const errorBox = document.getElementById('errorMsg');
+                    errorBox.innerText = data.message || 'Registration failed. Email might already exist.';
+                    errorBox.style.display = 'block';
+                }
+            } catch (err) {
+                console.error(err);
+                document.getElementById('errorMsg').innerText = 'A network error occurred.';
+                document.getElementById('errorMsg').style.display = 'block';
+            } finally {
+                btn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

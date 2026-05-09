@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Cart — Fashion Shop</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div id="navbar-container"></div>
+
+    <div class="container">
+        <div style="padding:20px 0 8px;">
+            <h2 style="font-family:var(--font-display);font-size:28px;">Your Cart</h2>
+        </div>
+
+        <div id="emptyCartMsg" style="display:none; text-align:center; padding:80px 0; color:var(--c-muted);">
+            <div style="font-size:60px;margin-bottom:20px;">🛍️</div>
+            <h3 style="margin-bottom:12px;">Your cart is empty</h3>
+            <p style="margin-bottom:24px;">Add your favorite items to the cart</p>
+            <a href="/index.html" class="btn btn-primary">Continue Shopping</a>
+        </div>
+
+        <div class="cart-layout" id="cartLayout" style="display:none;">
+            <div class="cart-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Size</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Subtotal</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="cartBody"></tbody>
+                </table>
+            </div>
+
+            <div class="cart-summary">
+                <h3>Order Summary</h3>
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span id="cartSubtotal">0 ₫</span>
+                </div>
+                <div class="summary-row">
+                    <span>Shipping Fee</span>
+                    <span style="color:var(--c-success);">Free</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total</span>
+                    <span id="cartTotal">0 ₫</span>
+                </div>
+                <a href="/checkout.html" class="btn btn-primary btn-full" style="margin-top:20px;padding:13px;">
+                    <i class="fas fa-credit-card"></i> Proceed to Checkout
+                </a>
+                <a href="/index.html" class="btn btn-outline btn-full" style="margin-top:10px;">
+                    &larr; Continue Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/common.js"></script>
+    <script>
+        loadNavbar();
+
+        function renderCart() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || {};
+            const cartKeys = Object.keys(cart);
+
+            if (cartKeys.length === 0) {
+                document.getElementById('emptyCartMsg').style.display = 'block';
+                document.getElementById('cartLayout').style.display = 'none';
+                updateNavbarUI();
+                return;
+            }
+
+            document.getElementById('emptyCartMsg').style.display = 'none';
+            document.getElementById('cartLayout').style.display = 'grid';
+
+            const tbody = document.getElementById('cartBody');
+            let total = 0;
+            tbody.innerHTML = '';
+
+            cartKeys.forEach(key => {
+                const item = cart[key];
+                const subTotal = item.price * item.quantity;
+                total += subTotal;
+
+                tbody.innerHTML += `
+                <tr>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:14px;">
+                      <div class="cart-item-img" style="background-image:url('${item.img}');flex-shrink:0;"></div>
+                      <div><div class="cart-item-name">${item.productName}</div></div>
+                    </div>
+                  </td>
+                  <td><span class="badge" style="background:var(--c-bg);color:var(--c-text);border:1px solid var(--c-border);">${item.size}</span></td>
+                  <td style="color:var(--c-accent);font-weight:500;">${formatCurrency(item.price)}</td>
+                  <td>
+                    <div class="qty-control" style="border-radius:6px; height: 32px;">
+                      <button type="button" onclick="updateItemQty('${key}', -1)" style="height: 32px;">−</button>
+                      <input type="number" value="${item.quantity}" readonly style="width:40px; height: 32px;">
+                      <button type="button" onclick="updateItemQty('${key}', 1)" style="height: 32px;">+</button>
+                    </div>
+                  </td>
+                  <td style="font-weight:600;font-family:var(--font-display);">${formatCurrency(subTotal)}</td>
+                  <td>
+                    <button onclick="removeItem('${key}')" class="btn btn-outline btn-sm" style="color:var(--c-danger);border-color:var(--c-danger);">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              `;
+            });
+
+            document.getElementById('cartSubtotal').innerText = formatCurrency(total);
+            document.getElementById('cartTotal').innerText = formatCurrency(total);
+            updateNavbarUI();
+        }
+
+        function updateItemQty(key, delta) {
+            let cart = JSON.parse(localStorage.getItem('cart'));
+            if (cart[key]) {
+                cart[key].quantity += delta;
+                if (cart[key].quantity <= 0) delete cart[key]; 
+                localStorage.setItem('cart', JSON.stringify(cart));
+                renderCart();
+            }
+        }
+
+        function removeItem(key) {
+            if (confirm('Remove this item from your cart?')) {
+                let cart = JSON.parse(localStorage.getItem('cart'));
+                delete cart[key];
+                localStorage.setItem('cart', JSON.stringify(cart));
+                renderCart();
+            }
+        }
+
+        renderCart();
+    </script>
+</body>
+</html>

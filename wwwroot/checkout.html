@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkout — Fashion Shop</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<div id="navbar-container"></div>
+
+<div class="container">
+  <div style="padding:20px 0 8px;">
+    <h2 style="font-family:var(--font-display);font-size:28px;">Checkout</h2>
+  </div>
+
+  <div id="errorMsg" class="alert alert-danger" style="display:none;"></div>
+
+  <div class="checkout-layout">
+    <form id="checkoutForm">
+      <div class="form-card">
+        <h3><i class="fas fa-map-marker-alt" style="color:var(--c-accent);margin-right:8px;"></i>Shipping Information</h3>
+        <div class="form-group">
+          <label class="form-label">Full Name *</label>
+          <input type="text" id="fullName" class="form-control" required placeholder="John Doe">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number *</label>
+          <input type="tel" id="phone" class="form-control" required placeholder="0901234567">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Shipping Address *</label>
+          <textarea id="address" class="form-control" required placeholder="House number, Street, Ward, District, City"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Order Notes</label>
+          <input type="text" id="note" class="form-control" placeholder="Notes for the delivery driver...">
+        </div>
+      </div>
+
+      <div class="form-card" style="margin-top:20px;">
+        <h3><i class="fas fa-wallet" style="color:var(--c-accent);margin-right:8px;"></i>Payment Method</h3>
+        <div class="payment-options">
+          <div class="payment-option selected" id="opt-cod">
+            <input type="radio" name="paymentMethod" id="cod" value="COD" checked onchange="selectPayment('COD')">
+            <label for="cod"><i class="fas fa-money-bill-wave" style="color:var(--c-success);"></i> Cash on Delivery (COD)</label>
+          </div>
+          <div class="payment-option" id="opt-wallet">
+            <input type="radio" name="paymentMethod" id="wallet" value="Bank Transfer" onchange="selectPayment('wallet')">
+            <label for="wallet"><i class="fas fa-qrcode" style="color:var(--c-accent);"></i> Bank Transfer (QR)</label>
+          </div>
+        </div>
+
+        <div id="qr-panel" style="display:none;margin-top:20px;padding:20px; background:var(--c-surface2);border:1.5px solid var(--c-border); border-radius:12px;text-align:center;">
+          <p style="font-size:13px;color:var(--c-muted);margin-bottom:14px;">Scan the QR code to transfer. Order will be processed after payment confirmation.</p>
+          <img src="/assets/images/qr-payment.png" alt="QR Code" style="width:240px;height:240px;border-radius:12px; border:1px solid var(--c-border);display:block;margin:0 auto 16px; object-fit:contain;background:#fff;" onerror="this.style.display='none';document.getElementById('qr-fallback').style.display='flex'">
+          
+          <div id="qr-fallback" style="display:none;width:240px;height:240px; border:2px dashed var(--c-border);border-radius:12px; align-items:center;justify-content:center;flex-direction:column; gap:8px;margin:0 auto 16px;color:var(--c-muted);font-size:13px;">
+            <i class="fas fa-image" style="font-size:32px;opacity:.4;"></i>
+            <span>QR image not found</span>
+          </div>
+
+          <div style="font-size:13px;line-height:2;text-align:left; max-width:280px;margin:0 auto;">
+            <div style="display:flex;justify-content:space-between; padding:7px 0;border-bottom:1px solid var(--c-border);">
+              <span style="color:var(--c-muted);">Bank</span><strong>ACB</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between; padding:7px 0;border-bottom:1px solid var(--c-border);">
+              <span style="color:var(--c-muted);">Account Number</span><strong>21169847</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between; padding:7px 0;border-bottom:1px solid var(--c-border);">
+              <span style="color:var(--c-muted);">Account Name</span><strong>FASHION SHOP</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between; padding:7px 0;border-bottom:1px solid var(--c-border);">
+              <span style="color:var(--c-muted);">Amount</span><strong style="color:var(--c-accent);font-size:15px;" id="qrTotal">0 ₫</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:7px 0;">
+              <span style="color:var(--c-muted);">Transfer Memo</span><strong>Fashion Shop Payment</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div>
+      <div class="cart-summary">
+        <h3>Your Order</h3>
+        <div id="checkoutSummaryItems"></div>
+        
+        <div class="summary-row" style="margin-top:8px;">
+          <span>Shipping</span><span style="color:var(--c-success);">Free</span>
+        </div>
+        <div class="summary-row total">
+          <span>Total</span>
+          <span id="checkoutTotal">0 ₫</span>
+        </div>
+        <button type="submit" form="checkoutForm" id="submitBtn" class="btn btn-primary btn-full" style="margin-top:20px;padding:14px;">
+          <i class="fas fa-check-circle"></i> Place Order
+        </button>
+        <a href="/cart.html" class="btn btn-outline btn-full" style="margin-top:10px;">
+          &larr; Back to Cart
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/common.js"></script>
+<script>
+  loadNavbar();
+  const token = localStorage.getItem('token');
+
+  // Pre-fill user data if logged in
+  const userJson = localStorage.getItem('user');
+  if (userJson) {
+      const user = JSON.parse(userJson);
+      document.getElementById('fullName').value = user.fullName || '';
+      document.getElementById('phone').value = user.phone || '';
+      document.getElementById('address').value = user.address || '';
+  }
+
+  function renderCheckoutSummary() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || {};
+      const itemsContainer = document.getElementById('checkoutSummaryItems');
+      let total = 0;
+      
+      if (Object.keys(cart).length === 0) {
+          window.location.href = '/cart.html';
+          return;
+      }
+
+      let itemsHtml = '';
+      Object.values(cart).forEach(item => {
+          const subTotal = item.price * item.quantity;
+          total += subTotal;
+          itemsHtml += `
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--c-border);">
+              <div style="width:48px;height:60px;background-image:url('${item.img}');background-size:cover;background-position:center;border-radius:6px;flex-shrink:0;background-color:#F0EBE3;"></div>
+              <div style="flex:1;">
+                <div style="font-size:13px;font-weight:500;">${item.productName}</div>
+                <div style="font-size:12px;color:var(--c-muted);">Size: ${item.size} × ${item.quantity}</div>
+              </div>
+              <div style="font-size:13px;font-weight:600;color:var(--c-accent);">
+                ${formatCurrency(subTotal)}
+              </div>
+            </div>`;
+      });
+
+      itemsContainer.innerHTML = itemsHtml;
+      document.getElementById('checkoutTotal').innerText = formatCurrency(total);
+      document.getElementById('qrTotal').innerText = formatCurrency(total);
+  }
+
+  function selectPayment(method) {
+      document.querySelectorAll('.payment-option').forEach(el => el.classList.remove('selected'));
+      document.getElementById('opt-' + (method === 'COD' ? 'cod' : 'wallet')).classList.add('selected');
+      const qrPanel = document.getElementById('qr-panel');
+      qrPanel.style.display = method === 'wallet' ? 'block' : 'none';
+  }
+
+  document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      if(!token) {
+          alert('Please login to place an order!');
+          window.location.href = '/login.html';
+          return;
+      }
+
+      const cart = JSON.parse(localStorage.getItem('cart')) || {};
+      const cartItemsArray = Object.values(cart).map(item => ({
+          productId: item.productId,
+          productName: item.productName,
+          size: item.size,
+          quantity: item.quantity,
+          price: item.price
+      }));
+
+      const payload = {
+          fullName: document.getElementById('fullName').value,
+          phone: document.getElementById('phone').value,
+          address: document.getElementById('address').value,
+          note: document.getElementById('note').value,
+          paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
+          cartItems: cartItemsArray
+      };
+
+      try {
+          const res = await fetch('https://localhost:7135/api/Orders/checkout', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify(payload)
+          });
+
+          if (res.ok) {
+              // Clear cart on success
+              localStorage.removeItem('cart');
+              alert('Order placed successfully!');
+              window.location.href = '/orderHistory.html'; // Or success page
+          } else {
+              const err = await res.json();
+              const errBox = document.getElementById('errorMsg');
+              errBox.innerText = err.message || 'An error occurred during checkout.';
+              errBox.style.display = 'block';
+          }
+      } catch (err) {
+          console.error("Checkout Error: ", err);
+      }
+  });
+
+  renderCheckoutSummary();
+</script>
+</body>
+</html>

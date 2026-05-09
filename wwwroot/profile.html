@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Account — Fashion Shop</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<div id="navbar-container"></div>
+
+<div class="container section">
+  <div class="section-header">
+    <h2 class="section-title">My Account</h2>
+  </div>
+
+  <div id="alertBox" style="display:none; padding:16px; margin-bottom:20px; border-radius:8px; font-size: 15px;"></div>
+
+  <div style="display:grid;grid-template-columns:240px 1fr;gap:32px;">
+
+    <div>
+      <div style="background:var(--c-surface);border-radius:12px;border:1px solid var(--c-border);overflow:hidden;">
+        <div style="padding:20px;border-bottom:1px solid var(--c-border);text-align:center;">
+          <div id="avatarInitials" style="width:60px;height:60px;background:linear-gradient(135deg,var(--c-accent),var(--c-accent-dk));border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:24px;color:#fff;text-transform:uppercase;">
+            </div>
+          <div style="font-weight:600;" id="sidebarName">...</div>
+          <div style="font-size:12px;color:var(--c-muted);" id="sidebarEmail">...</div>
+        </div>
+        <div>
+          <a href="/profile.html" style="display:block;padding:12px 20px;font-size:14px;border-bottom:1px solid var(--c-border);background:rgba(200,149,108,.08);color:var(--c-accent);">
+            <i class="fas fa-user fa-fw"></i> Personal Information
+          </a>
+          <a href="/orderHistory.html" style="display:block;padding:12px 20px;font-size:14px;border-bottom:1px solid var(--c-border);color:var(--c-text);">
+            <i class="fas fa-box fa-fw"></i> My Orders
+          </a>
+          <a href="#" onclick="logout()" style="display:block;padding:12px 20px;font-size:14px;color:var(--c-danger);">
+            <i class="fas fa-sign-out-alt fa-fw"></i> Sign Out
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:24px;">
+
+      <div class="form-card">
+        <h3><i class="fas fa-user-edit" style="color:var(--c-accent);margin-right:8px;"></i>Personal Information</h3>
+        <form id="profileForm" style="margin-top:16px;">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" id="fullName" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email (Cannot be changed)</label>
+            <input type="email" id="email" class="form-control" disabled style="background:var(--c-bg);color:var(--c-muted);">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" id="phone" class="form-control" placeholder="0901234567">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Default Address</label>
+            <textarea id="address" class="form-control" rows="2"></textarea>
+          </div>
+          <button type="submit" id="btnSaveProfile" class="btn btn-primary">
+            <i class="fas fa-save"></i> Save Changes
+          </button>
+        </form>
+      </div>
+
+      <div class="form-card">
+        <h3><i class="fas fa-lock" style="color:var(--c-accent);margin-right:8px;"></i>Change Password</h3>
+
+        <form id="passwordForm" style="margin-top:16px;">
+          <div class="form-group">
+            <label class="form-label">Current Password</label>
+            <input type="password" id="oldPassword" class="form-control" placeholder="••••••••" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">New Password</label>
+            <input type="password" id="newPassword" class="form-control" placeholder="At least 6 characters" required minlength="6">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm New Password</label>
+            <input type="password" id="newPassword2" class="form-control" placeholder="••••••••" required>
+          </div>
+          <div id="pwdMatchErr" style="color:var(--c-danger);font-size:13px;margin-top:-8px;margin-bottom:12px;display:none;">
+            Passwords do not match
+          </div>
+          <button type="submit" id="btnChangePwd" class="btn btn-primary">
+            <i class="fas fa-key"></i> Change Password
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="footer"><div class="container"><div class="footer-bottom">© 2026 Fashion Shop.</div></div></div>
+
+<script src="/js/common.js"></script>
+<script>
+  loadNavbar();
+  const token = localStorage.getItem('token');
+
+  function showAlert(msg, isSuccess = true) {
+      const box = document.getElementById('alertBox');
+      box.className = `alert alert-${isSuccess ? 'success' : 'danger'}`;
+      box.innerHTML = `<i class="fas fa-${isSuccess ? 'check-circle' : 'exclamation-circle'}"></i> ${msg}`;
+      box.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => box.style.display = 'none', 4000);
+  }
+
+
+  async function loadProfile() {
+      if (!token) {
+          window.location.href = '/login.html';
+          return;
+      }
+
+      try {
+          const res = await fetch('https://localhost:7135/api/Users/profile', {
+              headers: { 'Authorization': `Bearer ${token}` }
+          });
+
+          if (res.ok) {
+              const user = await res.json();
+              
+              // Populate Sidebar
+              document.getElementById('sidebarName').innerText = user.fullName;
+              document.getElementById('sidebarEmail').innerText = user.email;
+              document.getElementById('avatarInitials').innerText = user.fullName.substring(0, 1).toUpperCase();
+
+              // Populate Form
+              document.getElementById('fullName').value = user.fullName;
+              document.getElementById('email').value = user.email;
+              document.getElementById('phone').value = user.phone || '';
+              document.getElementById('address').value = user.address || '';
+          } else {
+              if (res.status === 401) {
+                  logout();
+              }
+          }
+      } catch (err) {
+          console.error("Error loading profile:", err);
+      }
+  }
+
+  // 2. Handle Profile Update
+  document.getElementById('profileForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const btn = document.getElementById('btnSaveProfile');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+      const payload = {
+          fullName: document.getElementById('fullName').value,
+          phone: document.getElementById('phone').value,
+          address: document.getElementById('address').value
+      };
+
+      try {
+          const res = await fetch('https://localhost:7135/api/Users/profile', {
+              method: 'PUT',
+              headers: { 
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify(payload)
+          });
+
+          if (res.ok) {
+              showAlert("Personal information updated successfully!");
+              
+              // Update local storage user object so the Navbar reflects the new name
+              let userStr = localStorage.getItem('user');
+              if (userStr) {
+                  let userObj = JSON.parse(userStr);
+                  userObj.fullName = payload.fullName;
+                  localStorage.setItem('user', JSON.stringify(userObj));
+              }
+              
+              updateNavbarUI(); // Re-render navbar
+              loadProfile();    // Re-render sidebar
+          } else {
+              showAlert("Failed to update profile.", false);
+          }
+      } catch (err) {
+          console.error(err);
+          showAlert("An error occurred.", false);
+      } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+      }
+  });
+
+  // 3. Handle Password Change
+  document.getElementById('passwordForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const newPwd = document.getElementById('newPassword').value;
+      const newPwd2 = document.getElementById('newPassword2').value;
+      const errBox = document.getElementById('pwdMatchErr');
+
+      if (newPwd !== newPwd2) {
+          errBox.style.display = 'block';
+          return;
+      }
+      errBox.style.display = 'none';
+
+      const btn = document.getElementById('btnChangePwd');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+      const payload = {
+          oldPassword: document.getElementById('oldPassword').value,
+          newPassword: newPwd
+      };
+
+      try {
+          const res = await fetch('https://localhost:7135/api/Users/change-password', {
+              method: 'PUT',
+              headers: { 
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify(payload)
+          });
+
+          const data = await res.json();
+
+          if (res.ok) {
+              showAlert("Password changed successfully!");
+              document.getElementById('passwordForm').reset(); 
+          } else {
+              showAlert(data.message || "Incorrect current password.", false);
+          }
+      } catch (err) {
+          console.error(err);
+          showAlert("An error occurred.", false);
+      } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-key"></i> Change Password';
+      }
+  });
+
+  // Initialize
+  loadProfile();
+</script>
+</body>
+</html>
