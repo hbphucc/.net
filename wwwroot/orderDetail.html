@@ -144,7 +144,7 @@
 
             try {
 
-                const res = await fetch(`https://localhost:7135/api/Orders/${orderId}`, {
+                const res = await fetch(`${API_BASE_URL}/Orders/${orderId}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
@@ -186,7 +186,7 @@
                 }
 
 
-                document.getElementById('orderDetailsBody').innerHTML = order.details.map(d => {
+                document.getElementById('orderDetailsBody').innerHTML = order.orderDetails.map(d => {
                     const subTotal = d.price * d.quantity;
                     return `
                     <tr style="border-top:1px solid var(--c-border);">
@@ -213,7 +213,7 @@
             if (!confirm('Are you sure you want to cancel this order?')) return;
 
             try {
-                const res = await fetch(`https://localhost:7135/api/Orders/${orderId}/cancel`, {
+                const res = await fetch(`${API_BASE_URL}/Orders/${orderId}/cancel`, {
                     method: 'PUT',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });

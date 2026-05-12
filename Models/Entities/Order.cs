@@ -40,7 +40,6 @@ namespace FashionShopAPI.Models.Entities
         [Column("updatedAt")]
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
-        // Navigation properties
         [ForeignKey("UserId")]
         public User User { get; set; } = null!;
 

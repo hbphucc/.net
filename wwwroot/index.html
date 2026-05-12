@@ -38,7 +38,7 @@
                 const search = urlParams.get('search') || '';
                 const gender = urlParams.get('gender') || '';
 
-                const res = await fetch(`https://localhost:7135/api/Products?search=${search}&gender=${gender}`);
+                const res = await fetch(`${API_BASE_URL}/Products?search=${search}&gender=${gender}`);
                 const data = await res.json();
 
                 const container = document.getElementById('productGrid');

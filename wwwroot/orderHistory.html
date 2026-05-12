@@ -58,7 +58,7 @@
             }
 
             try {
-                const res = await fetch('https://localhost:7135/api/Orders/history', {
+                const res = await fetch(`${API_BASE_URL}/Orders/history`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 

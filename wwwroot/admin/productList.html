@@ -1,459 +1,248 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product Management — Admin</title>
-  <link rel="stylesheet" href="/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    .backdrop {
-      position:fixed;inset:0;background:rgba(12,10,7,.52);
-      backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
-      z-index:1000;display:flex;align-items:center;justify-content:center;
-      padding:20px;opacity:0;pointer-events:none;transition:opacity .22s ease;
-    }
-    .backdrop.open{opacity:1;pointer-events:all;}
-    .modal{background:var(--c-surface,#fff);border-radius:20px;
-      box-shadow:0 28px 72px rgba(0,0,0,.18),0 8px 24px rgba(0,0,0,.08);
-      width:100%;max-height:90vh;overflow-y:auto;
-      transform:translateY(18px) scale(.975);
-      transition:transform .26s cubic-bezier(.34,1.45,.64,1);}
-    .backdrop.open .modal{transform:translateY(0) scale(1);}
-    .modal-sm{max-width:420px;}.modal-lg{max-width:720px;}
-    .modal::-webkit-scrollbar{width:4px;}
-    .modal::-webkit-scrollbar-thumb{background:var(--c-border-dk,#ccc);border-radius:10px;}
-    .modal-head{display:flex;align-items:center;justify-content:space-between;
-      padding:20px 26px 16px;border-bottom:1px solid var(--c-border,#eee);
-      position:sticky;top:0;background:var(--c-surface,#fff);z-index:5;border-radius:20px 20px 0 0;}
-    .modal-title{display:flex;align-items:center;gap:10px;
-      font-family:var(--font-display,serif);font-size:18px;font-weight:600;color:var(--c-text,#111);}
-    .title-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;}
-    .modal-x{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--c-border,#eee);
-      background:transparent;color:var(--c-muted,#888);cursor:pointer;font-size:14px;
-      display:flex;align-items:center;justify-content:center;transition:all .14s;}
-    .modal-x:hover{background:var(--c-bg,#f5f5f5);color:var(--c-text,#111);}
-    .modal-body{padding:22px 26px;}
-    .modal-foot{padding:14px 26px 22px;border-top:1px solid var(--c-border,#eee);
-      display:flex;align-items:center;justify-content:flex-end;gap:10px;}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management — Admin</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .admin-table img {
+            width: 40px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid var(--c-border);
+        }
 
-    .view-layout{display:grid;grid-template-columns:160px 1fr;gap:22px;}
-    .view-img{width:100%;aspect-ratio:3/4;border-radius:12px;background-size:cover;
-      background-position:center;background-color:var(--c-accent-lt,#f5ebe0);border:1px solid var(--c-border,#eee);}
-    .info-block{display:flex;flex-direction:column;gap:14px;}
-    .info-row{display:flex;flex-direction:column;gap:3px;}
-    .info-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--c-muted,#888);}
-    .info-val{font-size:14px;color:var(--c-text,#111);}
-    .info-val.big{font-family:var(--font-display,serif);font-size:22px;color:var(--c-accent,#c8956c);font-weight:600;}
-    .info-val.sm{font-size:13px;color:var(--c-muted,#888);line-height:1.65;}
-    .info-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-    .sz-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:3px;}
-    .sz-box{border:1.5px solid var(--c-border,#eee);border-radius:9px;padding:9px 4px;text-align:center;background:var(--c-surface2,#fafaf8);}
-    .sz-box .lbl{font-size:10px;font-weight:700;color:var(--c-muted,#888);letter-spacing:.5px;}
-    .sz-box .qty{font-family:var(--font-display,serif);font-size:18px;font-weight:600;line-height:1.3;color:var(--c-text,#111);}
-    .sz-box.ok{border-color:#A8D5B8;background:var(--c-success-lt,#edf7f2);}
-    .sz-box.ok .qty{color:var(--c-success,#3a8c5c);}
-    .sz-box.out{border-color:#EBC0C0;background:var(--c-danger-lt,#fdf0f0);}
-    .sz-box.out .qty{color:var(--c-danger,#c94040);}
+        .size-qty-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            margin-top: 10px;
+        }
 
-    .edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-    .edit-grid .full{grid-column:1/-1;}
-    .fg{display:flex;flex-direction:column;gap:4px;}
-    .fl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--c-muted,#888);}
-    .fl .req{color:var(--c-danger,#c94040);}
-    .sz-inputs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
-    .sz-inp-g{display:flex;flex-direction:column;align-items:center;gap:5px;}
-    .sz-inp-g .sz-lbl{font-size:10px;font-weight:800;color:var(--c-muted,#888);
-      background:var(--c-bg,#f5f2ed);border:1.5px solid var(--c-border,#eee);
-      width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;}
-    .sz-inp-g input{width:100%;padding:7px 4px;border:1.5px solid var(--c-border,#eee);
-      border-radius:7px;font-size:14px;font-weight:600;text-align:center;
-      color:var(--c-text,#111);outline:none;transition:border-color .15s;}
-    .sz-inp-g input:focus{border-color:var(--c-accent,#c8956c);box-shadow:0 0 0 3px rgba(200,149,108,.1);}
+            .size-qty-grid input {
+                text-align: center;
+                padding: 5px;
+            }
 
-    .del-body{text-align:center;padding:6px 0;}
-    .del-ico{width:60px;height:60px;border-radius:18px;background:var(--c-danger-lt,#fdf0f0);
-      border:2px solid #EBC0C0;display:flex;align-items:center;justify-content:center;
-      margin:0 auto 14px;font-size:24px;color:var(--c-danger,#c94040);}
-    .del-body h3{font-family:var(--font-display,serif);font-size:18px;margin-bottom:8px;}
-    .del-body p{font-size:13px;color:var(--c-muted,#888);line-height:1.65;max-width:280px;margin:0 auto;}
-    .del-name{font-weight:700;color:var(--c-danger,#c94040);font-style:italic;}
-    .del-warn{margin-top:12px;padding:9px 13px;background:var(--c-danger-lt,#fdf0f0);
-      border:1px solid #EBC0C0;border-radius:8px;font-size:12px;color:var(--c-danger,#c94040);
-      display:flex;align-items:center;gap:7px;}
-
-    .act-btn{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--c-border,#eee);
-      background:var(--c-surface,#fff);color:var(--c-muted,#888);cursor:pointer;
-      display:inline-flex;align-items:center;justify-content:center;
-      font-size:12.5px;transition:all .16s;position:relative;}
-    .act-btn::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 7px);left:50%;
-      transform:translateX(-50%);background:#1C1815;color:#fff;font-size:11px;
-      padding:3px 8px;border-radius:5px;white-space:nowrap;pointer-events:none;
-      opacity:0;transition:opacity .14s;font-family:var(--font-body,sans-serif);}
-    .act-btn::before{content:'';position:absolute;bottom:calc(100% + 3px);left:50%;
-      transform:translateX(-50%);border:4px solid transparent;border-top-color:#1C1815;
-      pointer-events:none;opacity:0;transition:opacity .14s;}
-    .act-btn:hover::after,.act-btn:hover::before{opacity:1;}
-    .act-btn:hover{transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.1);}
-    .act-btn.v:hover{color:#2563EB;border-color:#2563EB;background:#EFF4FF;}
-    .act-btn.e:hover{color:var(--c-accent,#c8956c);border-color:var(--c-accent,#c8956c);background:var(--c-accent-lt,#f5ebe0);}
-    .act-btn.d:hover{color:var(--c-danger,#c94040);border-color:var(--c-danger,#c94040);background:var(--c-danger-lt,#fdf0f0);}
-
-    .tbl-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
-    .tbl-search{position:relative;flex:1;max-width:280px;}
-    .tbl-search i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--c-muted,#888);font-size:12px;pointer-events:none;}
-    .tbl-search input{width:100%;padding:8px 12px 8px 32px;border:1.5px solid var(--c-border,#eee);
-      border-radius:8px;font-family:var(--font-body,sans-serif);font-size:13px;
-      background:var(--c-surface,#fff);color:var(--c-text,#111);outline:none;transition:border-color .16s;}
-    .tbl-search input:focus{border-color:var(--c-accent,#c8956c);}
-    .tbl-sel{padding:8px 12px;border:1.5px solid var(--c-border,#eee);border-radius:8px;
-      font-family:var(--font-body,sans-serif);font-size:13px;
-      background:var(--c-surface,#fff);color:var(--c-text,#111);outline:none;cursor:pointer;}
-    .tbl-sel:focus{border-color:var(--c-accent,#c8956c);}
-    .vis-info{margin-left:auto;font-size:12px;color:var(--c-muted,#888);}
-    @keyframes spin{to{transform:rotate(360deg);}}
-    .spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;
-      border-radius:50%;animation:spin .65s linear infinite;display:none;}
-    .loading .spin{display:inline-block;}.loading .lbl{display:none;}
-  </style>
+            .size-qty-grid label {
+                font-size: 11px;
+                display: block;
+                text-align: center;
+                font-weight: bold;
+            }
+    </style>
 </head>
 <body>
-<div class="admin-layout">
-  <div id="admin-nav-container"></div>
-  <div class="admin-content">
+    <div class="admin-layout">
+        <div id="admin-nav-container"></div>
 
-    <div class="admin-header">
-      <h1>Product Management</h1>
-      <a href="/admin/productForm.html" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Add Product
-      </a>
-    </div>
-
-    <div id="alertBox" style="display:none; margin-bottom: 20px;"></div>
-
-    <div class="tbl-toolbar">
-      <div class="tbl-search">
-        <i class="fas fa-search"></i>
-        <input type="text" id="srch" placeholder="Search product name…">
-      </div>
-      <select id="stF" class="tbl-sel">
-        <option value="">All statuses</option>
-        <option value="active">Active</option>
-        <option value="hidden">Hidden</option>
-      </select>
-      <select id="catF" class="tbl-sel"><option value="">All categories</option></select>
-      <button class="btn btn-outline btn-sm" onclick="resetF()"><i class="fas fa-rotate-left"></i> Reset</button>
-      <span class="vis-info">Showing <strong id="visCnt">0</strong> products</span>
-    </div>
-
-    <table class="admin-table">
-      <thead>
-        <tr>
-          <th>Image</th><th>Product Name</th><th>Category</th>
-          <th>Price</th><th>Stock</th><th>Status</th>
-          <th style="text-align:center;">Actions</th>
-        </tr>
-      </thead>
-      <tbody id="tbody">
-        </tbody>
-    </table>
-  </div>
-</div>
-
-<div class="backdrop" id="mView" onclick="bdClick(event,'mView')">
-  <div class="modal modal-lg">
-    <div class="modal-head">
-      <div class="modal-title"><div class="title-ico" style="background:#EFF4FF;color:#2563EB;"><i class="fas fa-eye"></i></div>Product Details</div>
-      <button class="modal-x" onclick="closeModal('mView')"><i class="fas fa-xmark"></i></button>
-    </div>
-    <div class="modal-body">
-      <div class="view-layout">
-        <div><div class="view-img" id="vImg"></div></div>
-        <div class="info-block">
-          <div class="info-row"><div class="info-lbl">Product Name</div><div class="info-val" id="vName" style="font-size:17px;font-weight:600;"></div></div>
-          <div class="info-2col">
-            <div class="info-row"><div class="info-lbl">Category</div><div class="info-val" id="vCat"></div></div>
-            <div class="info-row"><div class="info-lbl">Gender</div><div class="info-val" id="vGender"></div></div>
-          </div>
-          <div class="info-row"><div class="info-lbl">Price</div><div class="info-val big" id="vPrice"></div></div>
-          <div class="info-row"><div class="info-lbl">Description</div><div class="info-val sm" id="vDesc"></div></div>
-          <div class="info-row"><div class="info-lbl">Stock by Size</div><div class="sz-grid" id="vSz"></div></div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn-outline" onclick="closeModal('mView')">Close</button>
-      <button class="btn btn-accent" onclick="switchToEdit()"><i class="fas fa-pen"></i> Edit</button>
-    </div>
-  </div>
-</div>
-
-<div class="backdrop" id="mEdit" onclick="bdClick(event,'mEdit')">
-  <div class="modal modal-lg">
-    <div class="modal-head">
-      <div class="modal-title"><div class="title-ico" style="background:var(--c-accent-lt);color:var(--c-accent);"><i class="fas fa-pen"></i></div>Edit Product</div>
-      <button class="modal-x" onclick="closeModal('mEdit')"><i class="fas fa-xmark"></i></button>
-    </div>
-    <div class="modal-body">
-      <form id="editForm" onsubmit="submitEdit(event)">
-        <input type="hidden" id="eID">
-        <div class="edit-grid">
-          <div class="fg full"><label class="fl">Product Name <span class="req">*</span></label><input type="text" id="eName" class="form-control" required></div>
-          <div class="fg"><label class="fl">Category <span class="req">*</span></label>
-            <select id="eCat" class="form-control" required>
-              </select>
-          </div>
-          <div class="fg"><label class="fl">Price (₫) <span class="req">*</span></label><input type="number" id="ePrice" class="form-control" min="0" step="1000" required></div>
-          <div class="fg full"><label class="fl">Image URL</label><input type="text" id="eImg" class="form-control" placeholder="https://…"></div>
-          <div class="fg full"><label class="fl">Description</label><textarea id="eDesc" class="form-control" rows="3"></textarea></div>
-          <div class="fg full">
-            <label class="fl" style="margin-bottom:8px;">Stock by Size <span class="req">*</span></label>
-            <div class="sz-inputs">
-              <div class="sz-inp-g"><div class="sz-lbl">S</div><input type="number" id="eS_S" min="0" value="0"></div>
-              <div class="sz-inp-g"><div class="sz-lbl">M</div><input type="number" id="eS_M" min="0" value="0"></div>
-              <div class="sz-inp-g"><div class="sz-lbl">L</div><input type="number" id="eS_L" min="0" value="0"></div>
-              <div class="sz-inp-g"><div class="sz-lbl">XL</div><input type="number" id="eS_XL" min="0" value="0"></div>
-              <div class="sz-inp-g"><div class="sz-lbl">XXL</div><input type="number" id="eS_XXL" min="0" value="0"></div>
+        <div class="admin-content">
+            <div class="admin-header">
+                <h1>Product Management</h1>
             </div>
-          </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 400px; gap: 24px;">
+
+                <div>
+                    <div class="filter-bar" style="margin-bottom: 15px; display: flex; gap: 10px;">
+                        <input type="text" id="srch" placeholder="Search name..." class="form-control" style="flex:1">
+                        <select id="catF" class="form-control" style="width: 150px;"></select>
+                    </div>
+
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Product Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="form-card">
+                    <h3 id="formTitle">Add New Product</h3>
+                    <form id="productForm">
+                        <input type="hidden" id="eID">
+
+                        <div class="form-group">
+                            <label>Product Name *</label>
+                            <input type="text" id="eName" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Category *</label>
+                            <select id="eCat" class="form-control" required></select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Price (₫) *</label>
+                            <input type="number" id="ePrice" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Image URL</label>
+                            <input type="text" id="eImg" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Stock per Size (S, M, L, XL, XXL)</label>
+                            <div class="size-qty-grid">
+                                <div><label>S</label><input type="number" id="eS_S" value="0" class="form-control"></div>
+                                <div><label>M</label><input type="number" id="eS_M" value="0" class="form-control"></div>
+                                <div><label>L</label><input type="number" id="eS_L" value="0" class="form-control"></div>
+                                <div><label>XL</label><input type="number" id="eS_XL" value="0" class="form-control"></div>
+                                <div><label>XXL</label><input type="number" id="eS_XXL" value="0" class="form-control"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="eDesc" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-full" id="submitBtn">Save Product</button>
+                        <button type="button" class="btn btn-outline btn-full" style="margin-top:10px" onclick="resetForm()">Cancel / Clear</button>
+                    </form>
+                </div>
+            </div>
         </div>
-      </form>
     </div>
-    <div class="modal-foot">
-      <button class="btn btn-outline" onclick="closeModal('mEdit')">Cancel</button>
-      <button class="btn btn-accent" id="eSave" onclick="document.getElementById('editForm').requestSubmit()"><span class="lbl"><i class="fas fa-floppy-disk"></i> Save</span><div class="spin"></div></button>
-    </div>
-  </div>
-</div>
 
-<div class="backdrop" id="mDel" onclick="bdClick(event,'mDel')">
-  <div class="modal modal-sm">
-    <div class="modal-head">
-      <div class="modal-title"><div class="title-ico" style="background:var(--c-danger-lt);color:var(--c-danger);"><i class="fas fa-triangle-exclamation"></i></div>Confirm Hide</div>
-      <button class="modal-x" onclick="closeModal('mDel')"><i class="fas fa-xmark"></i></button>
-    </div>
-    <div class="modal-body">
-      <div class="del-body">
-        <div class="del-ico"><i class="fas fa-trash-can"></i></div>
-        <h3>Hide this product?</h3>
-        <p>Product "<span class="del-name" id="dName"></span>" will be hidden from the store.</p>
-        <div class="del-warn"><i class="fas fa-circle-exclamation"></i> Customers will not be able to find this product.</div>
-      </div>
-    </div>
-    <div class="modal-foot" style="justify-content:center;gap:12px;">
-      <button class="btn btn-outline" style="flex:1;" onclick="closeModal('mDel')"><i class="fas fa-xmark"></i> Cancel</button>
-      <button id="dBtn" class="btn btn-danger" style="flex:1;" onclick="submitDelete()"><i class="fas fa-trash-can"></i> Confirm</button>
-    </div>
-  </div>
-</div>
+    <script src="/js/common.js"></script>
+    <script>
+        loadAdminNav();
+        const token = localStorage.getItem('token');
+        const SIZES = ['S', 'M', 'L', 'XL', 'XXL'];
 
-<script src="/js/common.js"></script>
-<script>
-  loadAdminNav();
-  const token = localStorage.getItem('token');
-  const SIZES = ['S','M','L','XL','XXL'];
-  let curRow = null;
-  let deleteId = null;
+        async function init() {
+            try {
+                const catRes = await fetch(`${API_BASE_URL}/Categories`);
+                const categories = await catRes.json();
+                const eCat = document.getElementById('eCat');
+                const catF = document.getElementById('catF');
 
-  function openModal(id){document.getElementById(id).classList.add('open');document.body.style.overflow='hidden';}
-  function closeModal(id){document.getElementById(id).classList.remove('open');if(!document.querySelector('.backdrop.open'))document.body.style.overflow='';}
-  function bdClick(e,id){if(e.target===document.getElementById(id))closeModal(id);}
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.querySelectorAll('.backdrop.open').forEach(b=>b.classList.remove('open'));document.body.style.overflow='';}});
-  
-  function parseSz(str){const o={S:0,M:0,L:0,XL:0,XXL:0};if(!str)return o;str.split(',').forEach(p=>{const[k,v]=p.split(':');if(k)o[k.trim()]=parseInt(v)||0;});return o;}
-  function gL(g){return g==='male'?'Male':g==='female'?'Female':'Unisex';}
-  function showAlert(msg, isSuccess = true) {
-      const box = document.getElementById('alertBox');
-      box.className = `alert alert-${isSuccess ? 'success' : 'danger'}`;
-      box.innerHTML = `<i class="fas fa-${isSuccess ? 'check-circle' : 'exclamation-circle'}"></i> ${msg}`;
-      box.style.display = 'block';
-      setTimeout(() => box.style.display = 'none', 3000);
-  }
+                let catOptions = categories.map(c => `<option value="${c.categoryId}">${c.categoryName}</option>`).join('');
+                eCat.innerHTML = '<option value="">-- Select Category --</option>' + catOptions;
+                catF.innerHTML = '<option value="">All Categories</option>' + catOptions;
 
-  async function loadData() {
-      try {
-          const catRes = await fetch('https://localhost:7135/api/Categories');
-          const categories = await catRes.json();
-          const eCat = document.getElementById('eCat');
-          eCat.innerHTML = '';
-          categories.forEach(c => {
-              eCat.innerHTML += `<option value="${c.categoryId}">${c.categoryName} (${gL(c.gender)})</option>`;
-          });
+                loadProducts();
+            } catch (err) { console.error(err); }
+        }
 
-          const prodRes = await fetch('https://localhost:7135/api/Products?pageSize=1000');
-          const prodData = await prodRes.json();
-          const items = prodData.items || prodData; 
+        async function loadProducts() {
+            try {
+                const res = await fetch(`${API_BASE_URL}/Products?pageSize=1000`);
+                const data = await res.json();
+                const items = data.items || data;
 
-          const tbody = document.getElementById('tbody');
-          if(items.length === 0) {
-              tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:48px;color:var(--c-muted);"><i class="fas fa-box-open" style="font-size:32px;display:block;margin-bottom:10px;opacity:.35;"></i> No products available</td></tr>`;
-              return;
-          }
+                const tbody = document.getElementById('tbody');
+                tbody.innerHTML = items.map(p => {
+                    const tot = p.totalStock || 0;
+                    return `
+                        <tr>
+                            <td><img src="${p.img || '/img/no-image.png'}" alt=""></td>
+                            <td><strong>${p.productName}</strong></td>
+                            <td>${p.categoryName}</td>
+                            <td style="color:var(--c-accent); font-weight:bold;">${formatCurrency(p.price)}</td>
+                            <td>${tot}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline" onclick="editProduct('${p.productId}')">Edit</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteProduct('${p.productId}')">Delete</button>
+                            </td>
+                        </tr>`;
+                }).join('');
+            } catch (err) { console.error(err); }
+        }
 
-          const cats = new Set();
-          tbody.innerHTML = items.map(p => {
-              cats.add(p.categoryName);
-              const szStr = Object.entries(p.sizeQuantities || {}).map(([k,v]) => `${k}:${v}`).join(',');
-              const tot = p.totalStock || Object.values(p.sizeQuantities || {}).reduce((a, b) => a + b, 0);
-              const statusStr = true ? 'active' : 'hidden'; 
-              
-              return `
-                <tr class="prow" 
-                    data-id="${p.productId}" 
-                    data-name="${p.productName.replace(/"/g, '&quot;')}" 
-                    data-cat="${p.categoryName.replace(/"/g, '&quot;')}" 
-                    data-catid="${p.categoryId}" 
-                    data-gender="${p.gender}" 
-                    data-price="${p.price}" 
-                    data-img="${(p.img||'').replace(/"/g, '&quot;')}" 
-                    data-desc="${(p.description||'').replace(/"/g, '&quot;')}" 
-                    data-sizes="${szStr}" 
-                    data-stock="${tot}" 
-                    data-status="${statusStr}">
-                  <td>
-                    <div style="width:46px;height:56px;border-radius:8px;background-image:url('${p.img}');background-size:cover;background-position:center;background-color:var(--c-accent-lt);border:1px solid var(--c-border);"></div>
-                  </td>
-                  <td>
-                    <strong>${p.productName}</strong>
-                    <div style="font-size:11.5px;color:var(--c-muted);margin-top:2px;">${gL(p.gender)}</div>
-                  </td>
-                  <td><span class="badge" style="background:var(--c-bg);color:var(--c-text);border:1px solid var(--c-border);">${p.categoryName}</span></td>
-                  <td style="color:var(--c-accent);font-weight:600;">${formatCurrency(p.price)}</td>
-                  <td>
-                    <span style="font-weight:600;">${tot}</span>
-                    <div style="width:50px;height:4px;background:var(--c-border);border-radius:2px;margin-top:4px;">
-                      <div style="height:100%;border-radius:2px;width:${tot>100?100:tot}%;background:${tot>20?'var(--c-success)':tot>0?'var(--c-warn)':'var(--c-danger)'};"></div>
-                    </div>
-                  </td>
-                  <td><span class="badge badge-delivered">Selling</span></td>
-                  <td style="text-align:center;">
-                    <div class="actions">
-                      <button class="act-btn v" data-tip="View details" onclick="openView(this.closest('tr'))"><i class="fas fa-eye"></i></button>
-                      <button class="act-btn e" data-tip="Edit" onclick="openEdit(this.closest('tr'))"><i class="fas fa-pen"></i></button>
-                      <button class="act-btn d" data-tip="Hide product" onclick="openDel(this.closest('tr'))"><i class="fas fa-trash-can"></i></button>
-                    </div>
-                  </td>
-                </tr>`;
-          }).join('');
+        async function editProduct(id) {
+            const res = await fetch(`${API_BASE_URL}/Products/${id}`);
+            const p = await res.json();
 
-          const sel = document.getElementById('catF');
-          sel.innerHTML = '<option value="">Tất cả danh mục</option>';
-          [...cats].sort().forEach(c => { sel.innerHTML += `<option value="${c}">${c}</option>`; });
-          
-          filter(); 
-      } catch (err) {
-          console.error(err);
-      }
-  }
+            document.getElementById('eID').value = p.productId;
+            document.getElementById('eName').value = p.productName;
+            document.getElementById('eCat').value = p.categoryId;
+            document.getElementById('ePrice').value = p.price;
+            document.getElementById('eImg').value = p.img || '';
+            document.getElementById('eDesc').value = p.description || '';
 
-  function openView(row){
-    curRow=row;const d=row.dataset,sz=parseSz(d.sizes);
-    document.getElementById('vImg').style.backgroundImage=d.img?`url('${d.img}')`:'none';
-    document.getElementById('vName').textContent=d.name;
-    document.getElementById('vCat').textContent=d.cat;
-    document.getElementById('vGender').textContent=gL(d.gender);
-    document.getElementById('vPrice').textContent=formatCurrency(parseFloat(d.price));
-    document.getElementById('vDesc').textContent=d.desc||'(Chưa có mô tả)';
-    document.getElementById('vSz').innerHTML=SIZES.map(s=>`<div class="sz-box ${sz[s]>0?'ok':'out'}"><div class="lbl">${s}</div><div class="qty">${sz[s]}</div></div>`).join('');
-    openModal('mView');
-  }
+            if (p.sizeQuantities) {
+                SIZES.forEach(s => {
+                    document.getElementById('eS_' + s).value = p.sizeQuantities[s] || 0;
+                });
+            }
 
-  function openEdit(row){
-    curRow=row;const d=row.dataset,sz=parseSz(d.sizes);
-    document.getElementById('eID').value=d.id;
-    document.getElementById('eName').value=d.name;
-    document.getElementById('ePrice').value=d.price;
-    document.getElementById('eImg').value=d.img||'';
-    document.getElementById('eDesc').value=d.desc||'';
-    document.getElementById('eCat').value=d.catid;
-    SIZES.forEach(s=>{const i=document.getElementById('eS_'+s);if(i)i.value=sz[s]??0;});
-    openModal('mEdit');
-  }
+            document.getElementById('formTitle').innerText = 'Edit Product';
+            document.getElementById('submitBtn').innerText = 'Update Product';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-  function switchToEdit(){closeModal('mView');setTimeout(()=>openEdit(curRow),130);}
+        document.getElementById('productForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('eID').value;
 
-  function openDel(row){
-    curRow=row;const d=row.dataset;
-    document.getElementById('dName').textContent=d.name;
-    deleteId = d.id;
-    openModal('mDel');
-  }
+            const payload = {
+                productName: document.getElementById('eName').value,
+                categoryId: document.getElementById('eCat').value,
+                price: parseFloat(document.getElementById('ePrice').value),
+                img: document.getElementById('eImg').value,
+                description: document.getElementById('eDesc').value,
+                sizeQuantities: {
+                    'S': parseInt(document.getElementById('eS_S').value) || 0,
+                    'M': parseInt(document.getElementById('eS_M').value) || 0,
+                    'L': parseInt(document.getElementById('eS_L').value) || 0,
+                    'XL': parseInt(document.getElementById('eS_XL').value) || 0,
+                    'XXL': parseInt(document.getElementById('eS_XXL').value) || 0
+                }
+            };
 
-  async function submitEdit(e) {
-      e.preventDefault();
-      const btn = document.getElementById('eSave');
-      btn.classList.add('loading');
-      btn.disabled = true;
-      
-      const id = document.getElementById('eID').value;
-      const payload = {
-          productName: document.getElementById('eName').value,
-          categoryId: document.getElementById('eCat').value,
-          price: parseFloat(document.getElementById('ePrice').value),
-          img: document.getElementById('eImg').value,
-          description: document.getElementById('eDesc').value,
-          sizeQuantities: {
-              'S': parseInt(document.getElementById('eS_S').value) || 0,
-              'M': parseInt(document.getElementById('eS_M').value) || 0,
-              'L': parseInt(document.getElementById('eS_L').value) || 0,
-              'XL': parseInt(document.getElementById('eS_XL').value) || 0,
-              'XXL': parseInt(document.getElementById('eS_XXL').value) || 0
-          }
-      };
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `${API_BASE_URL}/Products/${id}` : `${API_BASE_URL}/Products`;
 
-      try {
-          const res = await fetch(`https://localhost:7135/api/Products/${id}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-              body: JSON.stringify(payload)
-          });
-          if(res.ok) {
-              closeModal('mEdit');
-              showAlert('Product updated successfully!');
-              await loadData();
-          } else throw new Error();
-      } catch (err) {
-          showAlert('Error updating product!', false);
-      } finally {
-          btn.classList.remove('loading');
-          btn.disabled = false;
-      }
-  }
+            const res = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify(payload)
+            });
 
-  async function submitDelete() {
-      try {
-          const res = await fetch(`https://localhost:7135/api/Products/${deleteId}`, {
-              method: 'DELETE',
-              headers: { 'Authorization': `Bearer ${token}` }
-          });
-          if(res.ok) {
-              closeModal('mDel');
-              showAlert('Product hidden successfully!');
-              await loadData();
-          } else throw new Error();
-      } catch (err) {
-          showAlert('Error hiding product!', false);
-      }
-  }
+            if (res.ok) {
+                alert(id ? 'Updated successfully!' : 'Added successfully!');
+                resetForm();
+                loadProducts();
+            } else {
+                alert('Operation failed!');
+            }
+        };
 
-  function filter(){
-    const kw=document.getElementById('srch').value.toLowerCase().trim();
-    const st=document.getElementById('stF').value;
-    const cat=document.getElementById('catF').value;
-    let n=0;
-    document.querySelectorAll('.prow').forEach(r=>{
-      const ok=(!kw||r.dataset.name.toLowerCase().includes(kw))&&(!st||r.dataset.status===st)&&(!cat||r.dataset.cat===cat);
-      r.style.display=ok?'':'none';if(ok)n++;
-    });
-    document.getElementById('visCnt').textContent=n;
-  }
-  function resetF(){document.getElementById('srch').value='';document.getElementById('stF').value='';document.getElementById('catF').value='';filter();}
-  
-  document.getElementById('srch').addEventListener('input',filter);
-  document.getElementById('stF').addEventListener('change',filter);
-  document.getElementById('catF').addEventListener('change',filter);
+        async function deleteProduct(id) {
+            if (confirm('Delete this product?')) {
+                await fetch(`${API_BASE_URL}/Products/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                loadProducts();
+            }
+        }
 
-  loadData();
-</script>
+        function resetForm() {
+            document.getElementById('productForm').reset();
+            document.getElementById('eID').value = '';
+            document.getElementById('formTitle').innerText = 'Add New Product';
+            document.getElementById('submitBtn').innerText = 'Save Product';
+        }
+
+        document.getElementById('srch').addEventListener('input', loadProducts);
+        document.getElementById('catF').addEventListener('change', loadProducts);
+
+        init();
+    </script>
 </body>
 </html>

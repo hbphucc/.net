@@ -2,64 +2,100 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard Admin</title>
+    <title>Dashboard Admin — Fashion Shop</title>
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="admin-layout">
         <div id="admin-nav-container"></div>
 
         <div class="admin-content">
-            <h1>Dashboard</h1>
-            <div class="stats-grid">
+            <div class="admin-header">
+                <h1>Admin Dashboard</h1>
+            </div>
+
+            <div class="stats-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+
                 <div class="stat-card">
                     <div class="stat-card__label">Total Products</div>
                     <div class="stat-card__value" id="valProducts">...</div>
                 </div>
+
                 <div class="stat-card">
-                    <div class="stat-card__label">Today's Revenue</div>
-                    <div class="stat-card__value" style="color:var(--c-accent)" id="valRevenue">...</div>
+                    <div class="stat-card__label">Month Revenue</div>
+                    <div class="stat-card__value" style="color:var(--c-accent)" id="valMonthRevenue">...</div>
                 </div>
+
                 <div class="stat-card">
                     <div class="stat-card__label">Pending Orders</div>
-                    <div class="stat-card__value" style="color:red" id="valOrders">...</div>
+                    <div class="stat-card__value" style="color:var(--c-danger)" id="valOrders">...</div>
                 </div>
+
+                <div class="stat-card">
+                    <div class="stat-card__label">Today's Revenue</div>
+                    <div class="stat-card__value" id="valRevenue">...</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card__label">Total Users</div>
+                    <div class="stat-card__value" id="valUsers">...</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card__label">New Users Today</div>
+                    <div class="stat-card__value" id="valNewUsers">...</div>
+                </div>
+
             </div>
         </div>
     </div>
 
     <script src="/js/common.js"></script>
     <script>
-    loadAdminNav();
+        loadAdminNav();
 
-    async function loadDashboardData() {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            window.location.href = '/login.html'; return;
-        }
-
-        try {
-            const res = await fetch('https://localhost:7135/api/Admin/dashboard', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-
-            if (res.status === 401 || res.status === 403) {
-                alert('Session expired or you do not have Admin rights!');
-                window.location.href = '/login.html'; return;
+        async function loadDashboardData() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
             }
 
-            const data = await res.json();
-            document.getElementById('valProducts').innerText = data.totalProducts;
-            document.getElementById('valUsers').innerText = data.totalUsers; 
-            document.getElementById('valNewUsers').innerText = data.newUsersToday; 
-            document.getElementById('valMonthRevenue').innerText = formatCurrency(data.monthRevenue); // New
-            document.getElementById('valRevenue').innerText = formatCurrency(data.todayRevenue);
-            document.getElementById('valOrders').innerText = data.newOrdersCount;
+            try {
+                const res = await fetch(`${API_BASE_URL}/Admin/dashboard`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
 
-        } catch (e) { console.error(e); }
-    }
+                if (res.status === 401 || res.status === 403) {
+                    alert('Session expired or you do not have Admin rights!');
+                    window.location.href = '/login.html';
+                    return;
+                }
 
-    loadDashboardData();
+                if (!res.ok) {
+                    throw new Error(`API returned status: ${res.status}`);
+                }
+
+                const data = await res.json();
+                const safeFormat = (val) => {
+                    const num = Number(val) || 0;
+                    return typeof formatCurrency === 'function' ? formatCurrency(num) : num.toLocaleString('vi-VN') + ' ₫';
+                };
+
+                document.getElementById('valProducts').innerText = data.totalProducts || 0;
+                document.getElementById('valUsers').innerText = data.totalUsers || 0;
+                document.getElementById('valNewUsers').innerText = data.newUsersToday || 0;
+                document.getElementById('valMonthRevenue').innerText = safeFormat(data.monthRevenue);
+                document.getElementById('valRevenue').innerText = safeFormat(data.todayRevenue);
+                document.getElementById('valOrders').innerText = data.newOrdersCount || 0;
+
+            } catch (e) {
+                console.error("Dashboard error:", e);
+            }
+        }
+
+        loadDashboardData();
     </script>
 </body>
 </html>

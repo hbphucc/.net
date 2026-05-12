@@ -122,19 +122,17 @@
       }
 
       try {
-          const res = await fetch('https://localhost:7135/api/Users/profile', {
+          const res = await fetch(`${API_BASE_URL}/Users/profile`, {
               headers: { 'Authorization': `Bearer ${token}` }
           });
 
           if (res.ok) {
               const user = await res.json();
               
-              // Populate Sidebar
+
               document.getElementById('sidebarName').innerText = user.fullName;
               document.getElementById('sidebarEmail').innerText = user.email;
               document.getElementById('avatarInitials').innerText = user.fullName.substring(0, 1).toUpperCase();
-
-              // Populate Form
               document.getElementById('fullName').value = user.fullName;
               document.getElementById('email').value = user.email;
               document.getElementById('phone').value = user.phone || '';
@@ -149,7 +147,6 @@
       }
   }
 
-  // 2. Handle Profile Update
   document.getElementById('profileForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
@@ -164,7 +161,7 @@
       };
 
       try {
-          const res = await fetch('https://localhost:7135/api/Users/profile', {
+          const res = await fetch(`${API_BASE_URL}/Users/profile`, {
               method: 'PUT',
               headers: { 
                   'Content-Type': 'application/json',
@@ -176,7 +173,6 @@
           if (res.ok) {
               showAlert("Personal information updated successfully!");
               
-              // Update local storage user object so the Navbar reflects the new name
               let userStr = localStorage.getItem('user');
               if (userStr) {
                   let userObj = JSON.parse(userStr);
@@ -184,8 +180,8 @@
                   localStorage.setItem('user', JSON.stringify(userObj));
               }
               
-              updateNavbarUI(); // Re-render navbar
-              loadProfile();    // Re-render sidebar
+              updateNavbarUI();
+              loadProfile();   
           } else {
               showAlert("Failed to update profile.", false);
           }
@@ -198,7 +194,6 @@
       }
   });
 
-  // 3. Handle Password Change
   document.getElementById('passwordForm').addEventListener('submit', async function(e) {
       e.preventDefault();
 
@@ -222,7 +217,7 @@
       };
 
       try {
-          const res = await fetch('https://localhost:7135/api/Users/change-password', {
+          const res = await fetch(`${API_BASE_URL}/Users/change-password`, {
               method: 'PUT',
               headers: { 
                   'Content-Type': 'application/json',
@@ -248,7 +243,6 @@
       }
   });
 
-  // Initialize
   loadProfile();
 </script>
 </body>

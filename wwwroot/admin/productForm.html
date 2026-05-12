@@ -122,7 +122,7 @@
 
   async function loadCategories() {
       try {
-          const res = await fetch('https://localhost:7135/api/Categories');
+          const res = await fetch(`${API_BASE_URL}/Categories`);
           const categories = await res.json();
           const select = document.getElementById('categoryId');
 
@@ -143,7 +143,7 @@
       document.getElementById('productId').value = editId;
 
       try {
-          const res = await fetch(`https://localhost:7135/api/Products/${editId}`);
+          const res = await fetch(`${API_BASE_URL}/Products/${editId}`);
           if (!res.ok) throw new Error("Product not found");
 
           const p = await res.json();
@@ -189,8 +189,8 @@
       const isUpdate = !!editId;
       const method = isUpdate ? 'PUT' : 'POST';
       const url = isUpdate
-                  ? `https://localhost:7135/api/Products/${editId}`
-                  : `https://localhost:7135/api/Products`;
+          ? `${API_BASE_URL}/Products/${editId}`
+          : `${API_BASE_URL}/Products`;
 
       try {
           const res = await fetch(url, {
@@ -209,7 +209,7 @@
               document.getElementById('alertMessage').className = 'alert alert-danger';
               document.getElementById('alertMessage').innerHTML = `<i class="fas fa-exclamation-circle"></i> Error: ${errData.message || 'Operation failed!'}`;
               document.getElementById('alertMessage').style.display = 'block';
-          }
+          } 
       } catch (err) {
           console.error(err);
       }

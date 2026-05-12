@@ -110,7 +110,6 @@
   loadNavbar();
   const token = localStorage.getItem('token');
 
-  // Pre-fill user data if logged in
   const userJson = localStorage.getItem('user');
   if (userJson) {
       const user = JSON.parse(userJson);
@@ -186,7 +185,7 @@
       };
 
       try {
-          const res = await fetch('https://localhost:7135/api/Orders/checkout', {
+          const res = await fetch(`${API_BASE_URL}/Orders/checkout`, {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json',
@@ -196,10 +195,9 @@
           });
 
           if (res.ok) {
-              // Clear cart on success
               localStorage.removeItem('cart');
               alert('Order placed successfully!');
-              window.location.href = '/orderHistory.html'; // Or success page
+              window.location.href = '/orderHistory.html';
           } else {
               const err = await res.json();
               const errBox = document.getElementById('errorMsg');

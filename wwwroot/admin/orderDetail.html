@@ -112,7 +112,7 @@
             }
 
             try {
-                const res = await fetch(`https://localhost:7135/api/Admin/orders/${orderId}`, {
+                const res = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
@@ -141,7 +141,7 @@
 
                 document.getElementById('statusSelect').value = order.status;
 
-                document.getElementById('orderDetailsBody').innerHTML = order.details.map(d => `
+                document.getElementById('orderDetailsBody').innerHTML = order.orderDetails.map(d => `
                   <tr style="border-top:1px solid var(--c-border);">
                       <td style="padding:12px 10px;">${d.productName}</td>
                       <td style="padding:12px 10px;text-align:center;">${d.size}</td>
@@ -163,7 +163,7 @@
             const newStatus = document.getElementById('statusSelect').value;
 
             try {
-                const res = await fetch(`https://localhost:7135/api/Admin/orders/${orderId}/status?status=${newStatus}`, {
+                const res = await fetch(`${API_BASE_URL}/orders/${orderId}/status?status=${newStatus}`, {
                     method: 'PUT',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });

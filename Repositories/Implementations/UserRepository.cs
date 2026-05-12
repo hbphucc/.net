@@ -51,5 +51,23 @@ namespace FashionShopAPI.Repositories.Implementations
             user.Password = newPassword;
             return await _context.SaveChangesAsync() > 0;
         }
+        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        {
+            return await _context.Users
+                .OrderByDescending(u => u.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<bool> UpdateUserStatusAsync(string userId, bool status)
+        {
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null)
+                return false;
+
+            user.Status = status;
+
+            return await _context.SaveChangesAsync() > 0;
+        }
     }
 }

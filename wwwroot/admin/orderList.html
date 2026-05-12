@@ -51,7 +51,7 @@
         const token = localStorage.getItem('token');
 
         function getStatusLabel(status) {
-            switch(status) {
+            switch (status) {
                 case 'pending': return 'Pending';
                 case 'processing': return 'Processing';
                 case 'shipped': return 'Shipped';
@@ -63,7 +63,8 @@
 
         async function loadOrders(statusFilter = '') {
             try {
-                let url = 'https://localhost:7135/api/Admin/orders';
+                // SỬA LỖI 404 TẠI ĐÂY: Bỏ chữ /Admin đi
+                let url = `${API_BASE_URL}/Orders`;
                 if (statusFilter !== '') {
                     url += `?status=${statusFilter}`;
                 }
@@ -73,30 +74,47 @@
                 });
 
                 if (!res.ok) {
-                    if(res.status === 401 || res.status === 403) {
-                        alert("Unauthorized!");
+                    if (res.status === 401 || res.status === 403) {
+                        alert("Unauthorized! Please log in again.");
                         window.location.href = '/login.html';
+                    } else {
+                        console.error("Failed to fetch orders, status:", res.status);
                     }
                     return;
                 }
 
-                const orders = await res.json();
+                const data = await res.json();
+                let orders = [];
+                if (Array.isArray(data)) {
+                    orders = data;
+                } else if (data && data.items && Array.isArray(data.items)) {
+                    orders = data.items;
+                }
+
+                const tbody = document.getElementById('orderTableBody');
+                if (!tbody) return;
+
+                if (orders.length === 0) {
+                    document.getElementById('orderCount').innerText = "0";
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;">No orders found.</td></tr>';
+                    return;
+                }
 
                 document.getElementById('orderCount').innerText = orders.length;
 
-                document.getElementById('orderTableBody').innerHTML = orders.map(o => `
+                tbody.innerHTML = orders.map(o => `
                     <tr>
-                        <td style="font-family:monospace;font-size:12px;">#${o.orderId.substring(0,8).toUpperCase()}</td>
+                        <td style="font-family:monospace;font-size:12px;">#${o.orderId ? o.orderId.substring(0, 8).toUpperCase() : 'N/A'}</td>
                         <td>
-                            <div>${o.fullName || o.userFullName}</div>
-                            <div style="font-size:12px;color:var(--c-muted);">${o.phone}</div>
+                            <div>${o.fullName || o.userFullName || 'N/A'}</div>
+                            <div style="font-size:12px;color:var(--c-muted);">${o.phone || ''}</div>
                         </td>
                         <td style="font-weight:600;color:var(--c-accent);">
-                            ${o.totalAmount.toLocaleString('vi-VN')} ₫
+                            ${(o.totalAmount || 0).toLocaleString('vi-VN')} ₫
                         </td>
-                        <td>${o.paymentMethod}</td>
+                        <td>${o.paymentMethod || 'N/A'}</td>
                         <td><span class="badge badge-${o.status}">${getStatusLabel(o.status)}</span></td>
-                        <td style="font-size:13px;color:var(--c-muted);">${new Date(o.createdAt).toLocaleString('vi-VN')}</td>
+                        <td style="font-size:13px;color:var(--c-muted);">${o.createdAt ? new Date(o.createdAt).toLocaleString('vi-VN') : 'N/A'}</td>
                         <td>
                             <a href="/admin/orderDetail.html?id=${o.orderId}" class="btn btn-outline btn-sm">
                                 <i class="fas fa-eye"></i> Details

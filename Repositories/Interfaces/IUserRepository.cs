@@ -10,5 +10,7 @@ namespace FashionShopAPI.Repositories.Interfaces
         Task<User?> GetByIdAsync(string userId);
         Task<bool> UpdateProfileAsync(User user);
         Task<bool> ChangePasswordAsync(string userId, string oldPassword, string newPassword);
+        Task<IEnumerable<User>> GetAllUsersAsync();
+        Task<bool> UpdateUserStatusAsync(string userId, bool status);
     }
 }

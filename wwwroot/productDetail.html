@@ -65,7 +65,7 @@
 
         async function loadProduct() {
             try {
-                const res = await fetch(`https://localhost:7135/api/Products/${productId}`);
+                const res = await fetch(`${API_BASE_URL}/Products/${productId}`);
                 if (!res.ok) {
                     alert("Product not found!");
                     window.location.href = "/index.html";
@@ -73,7 +73,6 @@
                 }
                 currentProduct = await res.json();
 
-                // Fill Data
                 document.title = `${currentProduct.productName} — Fashion Shop`;
                 document.getElementById('bcCategory').innerText = currentProduct.categoryName;
                 document.getElementById('bcProductName').innerText = currentProduct.productName;
@@ -85,7 +84,6 @@
                 document.getElementById('productPrice').innerText = formatCurrency(currentProduct.price);
                 document.getElementById('productDesc').innerText = currentProduct.description || 'No description available.';
 
-                // Render Sizes
                 const sizeContainer = document.getElementById('sizeContainer');
                 let hasStock = false;
 

@@ -112,7 +112,7 @@
             </div>
         </div>
     </div>
-
+    <script src="/js/common.js"></script>
     <script>
         document.getElementById('registerForm').addEventListener('submit', async function (e) {
             e.preventDefault();
@@ -139,7 +139,7 @@
             };
 
             try {
-                const res = await fetch('https://localhost:7135/api/Auth/register', {
+                const res = await fetch(`${API_BASE_URL}/Auth/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)

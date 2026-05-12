@@ -55,5 +55,17 @@ namespace FashionShopAPI.Repositories.Implementations
                 .OrderByDescending(o => o.CreatedAt)
                 .ToListAsync();
         }
+        public async Task<IEnumerable<Order>> GetAllOrdersAsync()
+        {
+            return await _context.Orders
+                .OrderByDescending(o => o.CreatedAt)
+                .ToListAsync();
+        }
+        public async Task<Order?> GetOrderByIdAsync(string orderId)
+        {
+            return await _context.Orders
+                .Include(o => o.OrderDetails)
+                .FirstOrDefaultAsync(o => o.OrderId == orderId);
+        }
     }
 }

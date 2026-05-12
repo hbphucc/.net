@@ -22,30 +22,51 @@
         const token = localStorage.getItem('token');
 
         async function loadUsers() {
-            const res = await fetch('https://localhost:7135/api/Admin/users', { 
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const users = await res.json();
-            document.getElementById('userTableBody').innerHTML = users.map(u => `
-          <tr>
-            <td><strong>${u.fullName}</strong></td>
-            <td>${u.email}</td>
-            <td><span class="badge ${u.role === 'admin' ? 'badge-processing' : ''}">${u.role}</span></td>
-            <td><span class="badge ${u.status ? 'badge-delivered' : 'badge-cancelled'}">${u.status ? 'Active' : 'Blocked'}</span></td>
-            <td>
-              ${u.role !== 'admin' ? `
-                <button class="btn btn-sm ${u.status ? 'btn-danger' : 'btn-outline'}" onclick="toggleUser('${u.userId}', ${!u.status})">
-                  ${u.status ? 'Block' : 'Unblock'}
-                </button>
-              ` : ''}
-            </td>
-          </tr>
+            try {
+                const res = await fetch(`${API_BASE_URL}/Users`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!res.ok) {
+                    console.error("Error API:", res.status);
+                    return;
+                }
+
+                const data = await res.json();
+
+                const users = data.items || data;
+
+                const tbody = document.getElementById('userTableBody');
+                if (!tbody) return;
+
+                if (!Array.isArray(users) || users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No users found.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = users.map(u => `
+            <tr>
+                <td><strong>${u.fullName || 'N/A'}</strong></td>
+                <td>${u.email}</td>
+                <td><span class="badge">${u.role}</span></td>
+                <td><span class="badge ${u.status ? 'badge-delivered' : 'badge-cancelled'}">${u.status ? 'Active' : 'Blocked'}</span></td>
+                <td>
+                    ${u.role !== 'admin' ? `
+                        <button class="btn btn-sm ${u.status ? 'btn-danger' : 'btn-outline'}" onclick="toggleUser('${u.userId}', ${!u.status})">
+                            ${u.status ? 'Block' : 'Unblock'}
+                        </button>
+                    ` : ''}
+                </td>
+            </tr>
         `).join('');
+            } catch (err) {
+                console.error("Error loading users:", err);
+            }
         }
 
         async function toggleUser(id, newStatus) {
             if (confirm('Confirm change of account status?')) {
-                await fetch(`https://localhost:7135/api/Admin/users/${id}/status?status=${newStatus}`, {
+                await fetch(`${API_BASE_URL}/Users/${id}/status?status=${newStatus}`, {
                     method: 'PUT',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });

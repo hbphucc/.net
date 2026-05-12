@@ -81,5 +81,31 @@ namespace FashionShopAPI.Controllers
             var orders = await _orderRepo.GetOrdersByUserIdAsync(userId!);
             return Ok(orders);
         }
+        [HttpGet]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> GetAllOrders()
+        {
+            var orders = await _orderRepo.GetAllOrdersAsync();
+            return Ok(orders);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOrderById(string id)
+        {
+            var order = await _orderRepo.GetOrderByIdAsync(id);
+
+            if (order == null)
+                return NotFound();
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var role = User.FindFirstValue(ClaimTypes.Role);
+
+            if (role != "admin" && order.UserId != userId)
+            {
+                return Forbid();
+            }
+
+            return Ok(order);
+        }
     }
 }

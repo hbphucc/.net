@@ -62,5 +62,26 @@ namespace FashionShopAPI.Controllers
 
             return Ok(new { message = "Password changed successfully!" });
         }
+
+        [HttpGet]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var users = await _userRepo.GetAllUsersAsync();
+
+            return Ok(users);
+        }
+
+        [HttpPut("{id}/status")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> UpdateUserStatus(string id, bool status)
+        {
+            var result = await _userRepo.UpdateUserStatusAsync(id, status);
+
+            if (!result)
+                return NotFound();
+
+            return Ok(new { message = "User status updated successfully!" });
+        }
     }
 }
