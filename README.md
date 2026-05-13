@@ -52,10 +52,6 @@ FashionShopAPI/
 - Dynamic SPA frontend served from `wwwroot`, state managed via LocalStorage
 - Server-side price and stock validation for data integrity
 
-## Known Issues / Code Notes
-
-### `Program.cs` middleware order
-
 ## License
 
 This project is for educational/portfolio purposes.
